@@ -219,7 +219,10 @@ function selectAgent(agentId) {
 }
 
 function syncModule() {
-  document.querySelector("#activeScenarioTitle").textContent = activeModule.title;
+  const scenarioTitle = document.querySelector("#activeScenarioTitle");
+  if (scenarioTitle) {
+    scenarioTitle.textContent = activeModule.title;
+  }
   document.querySelector("#activeLocation").textContent = activeModule.location;
   document.querySelector("#activeModuleType").textContent = activeModule.type;
   document.querySelector("#activeModuleName").textContent = activeModule.name;

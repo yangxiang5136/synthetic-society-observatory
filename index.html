@@ -12,7 +12,7 @@
   </head>
   <body>
     <main class="shell" aria-label="Synthetic Society Observatory">
-      <header class="command-bar">
+      <header class="top-orbit">
         <section class="brand-lockup" aria-label="Platform identity">
           <p class="kicker">Public Visual Platform</p>
           <h1>Synthetic Society Observatory</h1>
@@ -33,96 +33,83 @@
         </section>
       </header>
 
-      <section class="visual-stage" aria-label="Visual platform stage">
-        <aside class="scenario-panel panel" aria-label="Event injector">
-          <div class="panel-title">
-            <p class="kicker">event injector</p>
-            <h2>Module Rack</h2>
-          </div>
-          <p class="panel-note">
-            Default modules are neutral examples. Private product modules are added only by explicit instruction.
-          </p>
-          <div id="moduleRack" class="module-rack"></div>
-        </aside>
+      <section class="observatory-stage" aria-label="Visual observatory stage">
+        <section class="world-stage" aria-label="Synthetic society viewport">
+          <img
+            src="assets/cyberpunk-observatory-viewport.png"
+            alt="Neutral cyberpunk miniature synthetic society observatory viewport"
+          />
 
-        <section class="viewport-card" aria-label="Synthetic society viewport">
-          <div class="viewport-topline">
-            <div>
-              <p class="kicker">visual platform viewport</p>
-              <h2 id="activeScenarioTitle">Neutral module trial</h2>
-            </div>
-            <div class="run-badges" aria-label="Run boundary">
-              <span>public-safe seed</span>
-              <span>no private modules</span>
-              <span>staged observer UI</span>
-            </div>
+          <div class="stage-scrim" aria-hidden="true"></div>
+
+          <div class="stage-chip stage-location">
+            <span>observer slice</span>
+            <strong id="activeLocation">mixed-use district / public test window</strong>
           </div>
 
-          <div class="world-frame">
-            <img
-              src="assets/cyberpunk-observatory-viewport.png"
-              alt="Neutral cyberpunk miniature synthetic society observatory viewport"
-            />
-            <div class="glass-card world-label">
-              <span>observer slice</span>
-              <strong id="activeLocation">mixed-use district / public test window</strong>
-            </div>
-            <div class="glass-card module-beacon">
-              <span id="activeModuleType">software module</span>
-              <strong id="activeModuleName">Workflow Helper</strong>
-              <small id="activeModulePayload">purpose: reduce paperwork friction</small>
-            </div>
-            <div class="world-gridline one" aria-hidden="true"></div>
-            <div class="world-gridline two" aria-hidden="true"></div>
+          <div class="stage-chip stage-boundary" aria-label="Run boundary">
+            <span>public-safe seed</span>
+            <span>no private modules</span>
+            <span>staged observer UI</span>
           </div>
 
-          <section class="retype-track" aria-label="Semantic retyping path">
-            <article>
-              <span>1 / injected event</span>
-              <strong id="eventSummary">A tool promise enters the district</strong>
-            </article>
-            <article>
-              <span>2 / ontology split</span>
-              <strong id="ontologySummary">Agents classify it through local needs</strong>
-            </article>
-            <article>
-              <span>3 / social response</span>
-              <strong id="responseSummary">Adoption, delay, workaround, and rejection diverge</strong>
-            </article>
+          <aside class="module-dock glass-panel" aria-label="Event injector">
+            <div class="panel-title">
+              <p class="kicker">event injector</p>
+              <h2>Module Rack</h2>
+            </div>
+            <div id="moduleRack" class="module-rack"></div>
+          </aside>
+
+          <aside class="lens-dock glass-panel" aria-label="Agent impact panel">
+            <div class="panel-title">
+              <p class="kicker">population lens</p>
+              <h2 id="selectedAgentName">Mara Vale</h2>
+            </div>
+            <div class="agent-meta">
+              <span id="selectedAgentRole">night-shift operator</span>
+              <span id="selectedAgentNeed">needs reliable time savings</span>
+            </div>
+            <p id="selectedAgentRead" class="agent-read">
+              Classifies the event as useful only if it lowers repeated paperwork without extra setup.
+            </p>
+            <dl class="signal-list">
+              <div>
+                <dt>Primary question</dt>
+                <dd id="agentQuestion">Will it save time tonight?</dd>
+              </div>
+              <div>
+                <dt>Likely action</dt>
+                <dd id="agentAction">tries with a fallback ready</dd>
+              </div>
+            </dl>
+          </aside>
+
+          <section class="module-beacon glass-panel" aria-label="Active module">
+            <span id="activeModuleType">software module</span>
+            <strong id="activeModuleName">Workflow Helper</strong>
+            <small id="activeModulePayload">purpose: reduce paperwork friction</small>
           </section>
         </section>
 
-        <aside class="impact-panel panel" aria-label="Agent impact panel">
-          <div class="panel-title">
-            <p class="kicker">population lens</p>
-            <h2 id="selectedAgentName">Mara Vale</h2>
-          </div>
-          <div class="agent-meta">
-            <span id="selectedAgentRole">night-shift operator</span>
-            <span id="selectedAgentNeed">needs reliable time savings</span>
-          </div>
-          <p id="selectedAgentRead" class="agent-read">
-            Classifies the event as useful only if it lowers repeated paperwork without extra setup.
-          </p>
-          <dl class="signal-list">
-            <div>
-              <dt>Primary question</dt>
-              <dd id="agentQuestion">Will it save time tonight?</dd>
-            </div>
-            <div>
-              <dt>Likely action</dt>
-              <dd id="agentAction">tries with a fallback ready</dd>
-            </div>
-            <div>
-              <dt>Contamination guard</dt>
-              <dd>Agent memory does not assume prior knowledge of private modules.</dd>
-            </div>
-          </dl>
-        </aside>
+        <section class="semantic-ribbon glass-panel" aria-label="Semantic retyping path">
+          <article>
+            <span>1 / injected event</span>
+            <strong id="eventSummary">A tool promise enters the district</strong>
+          </article>
+          <article>
+            <span>2 / ontology split</span>
+            <strong id="ontologySummary">Agents classify it through local needs</strong>
+          </article>
+          <article>
+            <span>3 / social response</span>
+            <strong id="responseSummary">Adoption, delay, workaround, and rejection diverge</strong>
+          </article>
+        </section>
       </section>
 
-      <section class="lower-deck" aria-label="Impact and agent rail">
-        <section class="impact-map panel" aria-label="Impact map">
+      <section class="lower-orbit" aria-label="Impact and local population">
+        <section class="impact-map glass-panel" aria-label="Impact map">
           <div class="panel-title inline">
             <div>
               <p class="kicker">system impact</p>
@@ -133,7 +120,7 @@
           <div id="impactRows" class="impact-rows"></div>
         </section>
 
-        <section class="agent-rail panel" aria-label="Agent rail">
+        <section class="agent-rail glass-panel" aria-label="Agent rail">
           <div class="panel-title inline">
             <div>
               <p class="kicker">visible agents</p>
@@ -145,8 +132,8 @@
         </section>
       </section>
 
-      <footer class="platform-footer" aria-label="Platform boundary">
-        <span>Core stance: platform first, modules second.</span>
+      <footer class="platform-footer">
+        <span>Platform first, modules second.</span>
         <span>No branded private module is bundled by default.</span>
         <span>Software and hardware both enter as structured events.</span>
       </footer>
