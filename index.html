@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Synthetic Society Observatory</title>
+    <meta
+      name="description"
+      content="A public visual platform for injecting modular software or hardware events into a synthetic society sandbox."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell" aria-label="Synthetic Society Observatory">
+      <header class="command-bar">
+        <section class="brand-lockup" aria-label="Platform identity">
+          <p class="kicker">Public Visual Platform</p>
+          <h1>Synthetic Society Observatory</h1>
+          <p class="tagline">Inject a modular event. Watch a synthetic population reinterpret it.</p>
+        </section>
+
+        <section class="run-controls" aria-label="Run controls">
+          <button id="playButton" class="control-button primary" type="button">Play Slice</button>
+          <div class="mode-tabs" role="tablist" aria-label="View mode">
+            <button class="mode-tab is-active" type="button" data-view="world">World</button>
+            <button class="mode-tab" type="button" data-view="impact">Impact</button>
+            <button class="mode-tab" type="button" data-view="module">Module</button>
+          </div>
+          <label class="scrub-control" for="timeScrubber">
+            <span id="clockLabel">T+09:40</span>
+            <input id="timeScrubber" type="range" min="0" max="2880" value="580" />
+          </label>
+        </section>
+      </header>
+
+      <section class="visual-stage" aria-label="Visual platform stage">
+        <aside class="scenario-panel panel" aria-label="Event injector">
+          <div class="panel-title">
+            <p class="kicker">event injector</p>
+            <h2>Module Rack</h2>
+          </div>
+          <p class="panel-note">
+            Default modules are neutral examples. Private product modules are added only by explicit instruction.
+          </p>
+          <div id="moduleRack" class="module-rack"></div>
+        </aside>
+
+        <section class="viewport-card" aria-label="Synthetic society viewport">
+          <div class="viewport-topline">
+            <div>
+              <p class="kicker">visual platform viewport</p>
+              <h2 id="activeScenarioTitle">Neutral module trial</h2>
+            </div>
+            <div class="run-badges" aria-label="Run boundary">
+              <span>public-safe seed</span>
+              <span>no private modules</span>
+              <span>staged observer UI</span>
+            </div>
+          </div>
+
+          <div class="world-frame">
+            <img
+              src="assets/neutral-observatory-viewport.png"
+              alt="Neutral isometric synthetic society observatory viewport"
+            />
+            <div class="glass-card world-label">
+              <span>observer slice</span>
+              <strong id="activeLocation">mixed-use district / public test window</strong>
+            </div>
+            <div class="glass-card module-beacon">
+              <span id="activeModuleType">software module</span>
+              <strong id="activeModuleName">Workflow Helper</strong>
+              <small id="activeModulePayload">purpose: reduce paperwork friction</small>
+            </div>
+            <div class="world-gridline one" aria-hidden="true"></div>
+            <div class="world-gridline two" aria-hidden="true"></div>
+          </div>
+
+          <section class="retype-track" aria-label="Semantic retyping path">
+            <article>
+              <span>1 / injected event</span>
+              <strong id="eventSummary">A tool promise enters the district</strong>
+            </article>
+            <article>
+              <span>2 / ontology split</span>
+              <strong id="ontologySummary">Agents classify it through local needs</strong>
+            </article>
+            <article>
+              <span>3 / social response</span>
+              <strong id="responseSummary">Adoption, delay, workaround, and rejection diverge</strong>
+            </article>
+          </section>
+        </section>
+
+        <aside class="impact-panel panel" aria-label="Agent impact panel">
+          <div class="panel-title">
+            <p class="kicker">population lens</p>
+            <h2 id="selectedAgentName">Mara Vale</h2>
+          </div>
+          <div class="agent-meta">
+            <span id="selectedAgentRole">night-shift operator</span>
+            <span id="selectedAgentNeed">needs reliable time savings</span>
+          </div>
+          <p id="selectedAgentRead" class="agent-read">
+            Classifies the event as useful only if it lowers repeated paperwork without extra setup.
+          </p>
+          <dl class="signal-list">
+            <div>
+              <dt>Primary question</dt>
+              <dd id="agentQuestion">Will it save time tonight?</dd>
+            </div>
+            <div>
+              <dt>Likely action</dt>
+              <dd id="agentAction">tries with a fallback ready</dd>
+            </div>
+            <div>
+              <dt>Contamination guard</dt>
+              <dd>Agent memory does not assume prior knowledge of private modules.</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section class="lower-deck" aria-label="Impact and agent rail">
+        <section class="impact-map panel" aria-label="Impact map">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">system impact</p>
+              <h2>Event Diffusion Map</h2>
+            </div>
+            <span id="runBoundaryLabel">module can be injected or removed at any time</span>
+          </div>
+          <div id="impactRows" class="impact-rows"></div>
+        </section>
+
+        <section class="agent-rail panel" aria-label="Agent rail">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">visible agents</p>
+              <h2>Local Population Slice</h2>
+            </div>
+            <span>8 staged agents / neutral public seed</span>
+          </div>
+          <div id="agentRail" class="agent-grid"></div>
+        </section>
+      </section>
+
+      <footer class="platform-footer" aria-label="Platform boundary">
+        <span>Core stance: platform first, modules second.</span>
+        <span>No branded private module is bundled by default.</span>
+        <span>Software and hardware both enter as structured events.</span>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

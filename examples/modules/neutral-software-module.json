@@ -1,0 +1,27 @@
+{
+  "module_id": "neutral_software_001",
+  "module_type": "software",
+  "public_name": "Workflow Helper",
+  "purpose": "Reduce repeated paperwork steps for a small local service workflow.",
+  "digital_properties": {
+    "requires_account": false,
+    "requires_payment": false,
+    "requires_location_permission": false,
+    "estimated_setup_minutes": 4
+  },
+  "claims": [
+    "fewer repeated form fields",
+    "clearer task handoff",
+    "saved local draft"
+  ],
+  "interaction_requirements": [
+    "read a short instruction",
+    "choose a task template",
+    "confirm before sharing output"
+  ],
+  "privacy_notes": [
+    "neutral example uses synthetic records only",
+    "no private user content is bundled"
+  ],
+  "removal_policy": "can_be_removed_without_rewriting_population_seed"
+}

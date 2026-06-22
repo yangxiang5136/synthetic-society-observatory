@@ -1,0 +1,27 @@
+{
+  "module_id": "neutral_hardware_001",
+  "module_type": "hardware",
+  "public_name": "Wearable Signal Tag",
+  "purpose": "Help a small group share simple status signals during a field activity.",
+  "physical_properties": {
+    "weight_g": 42,
+    "dimensions_mm": [58, 34, 12],
+    "battery_hours": 18,
+    "wear_locations": ["wrist", "lanyard", "bag strap"]
+  },
+  "claims": [
+    "low setup time",
+    "visible status cue",
+    "no phone required during active use"
+  ],
+  "interaction_requirements": [
+    "initial pairing by facilitator",
+    "one physical button",
+    "visual status light"
+  ],
+  "privacy_notes": [
+    "status signal is visible to nearby participants",
+    "no identity data is required in the neutral example"
+  ],
+  "removal_policy": "can_be_removed_without_rewriting_population_seed"
+}
