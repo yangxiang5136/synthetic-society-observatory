@@ -20,7 +20,7 @@
         </section>
 
         <section class="run-controls" aria-label="Run controls">
-          <button id="playButton" class="control-button primary" type="button">Play Slice</button>
+          <button id="playButton" class="control-button primary" type="button">Play Timeline</button>
           <div class="mode-tabs" role="tablist" aria-label="View mode">
             <button class="mode-tab is-active" type="button" data-view="overview">Overview</button>
             <button class="mode-tab" type="button" data-view="observer">Observer</button>
@@ -36,7 +36,7 @@
 
       <section class="observatory-stage" aria-label="Visual observatory stage">
         <section class="world-stage" aria-label="Synthetic society viewport">
-          <canvas id="worldCanvas" class="world-canvas" aria-label="Interactive 3D synthetic society model"></canvas>
+          <canvas id="worldCanvas" class="world-canvas" aria-label="Dormant local 3D preview canvas"></canvas>
           <img
             id="stageImage"
             class="stage-fallback"
@@ -54,13 +54,37 @@
           <div class="stage-chip stage-boundary" aria-label="Run boundary">
             <span>public-safe seed</span>
             <span>no private modules</span>
-            <span>3D viewport model</span>
+            <span>vendor-rendered frame</span>
+            <span>local render loop off</span>
           </div>
 
           <div class="stage-chip stage-perspective">
             <span>perspective</span>
             <strong id="perspectiveSummary">high-dimensional social overview</strong>
           </div>
+
+          <section class="core-status glass-panel" aria-label="Current observatory focus">
+            <article>
+              <span>selected agent</span>
+              <strong id="coreAgentName">Mara Vale</strong>
+              <small id="coreAgentRole">night-shift operator</small>
+            </article>
+            <article>
+              <span>current time</span>
+              <strong id="coreTime">19:40</strong>
+              <small id="corePhase">night / neon city</small>
+            </article>
+            <article>
+              <span>current view</span>
+              <strong id="coreView">overview</strong>
+              <small id="coreRenderMode">vendor frame / GPU idle</small>
+            </article>
+            <article class="core-wide">
+              <span>thinking / event</span>
+              <strong id="coreThought">Will it save time tonight?</strong>
+              <small id="coreEvent">Night diffusion check</small>
+            </article>
+          </section>
 
           <aside class="module-dock glass-panel" aria-label="Event injector">
             <div class="panel-title">
@@ -169,7 +193,6 @@
       </footer>
     </main>
 
-    <script src="vendor/three.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

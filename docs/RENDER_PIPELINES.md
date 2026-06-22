@@ -20,9 +20,34 @@ Current integrated assets:
 - `assets/street-event-cinematic.webp` - alternate street-level view.
 - `assets/observer-deck-view.png` - observer-deck cinematic UI view.
 
-## 2. Interactive 3D Viewport Path
+## 2. Default Vendor-Frame Viewport Path
 
-Use the local Three.js viewport when the goal is to make perspective changes and time changes operational inside the public dashboard.
+Use pre-rendered stills, rendered clips, or frame manifests as the default public UI path. The browser should display returned assets and handle selection state, not continuously render the world locally.
+
+Current scope:
+
+- fixed, one-screen observatory console;
+- overview, observer, and first-person view switching;
+- timeline and event selection mapped to selected frame assets;
+- dawn, day, dusk, and night labels linked to the timeline;
+- local WebGL render loop disabled by default.
+
+Expected vendor-side flow:
+
+1. A scenario or observer slice becomes a render request.
+2. A vendor render lane produces stills, video, or a frame manifest.
+3. Returned assets are stored under `assets/` or a future CDN bucket.
+4. The UI displays those assets and updates metadata panels.
+
+Boundary:
+
+- "Vendor-side rendering" means Hugging Face, Blender node, cloud GPU, Replicate-like endpoint, or another external render worker.
+- A local `vendor/` dependency folder is not vendor-side rendering.
+- The UI must not claim a rendered frame is a live runtime or real prediction.
+
+## 3. Optional Local 3D Preview Path
+
+Use a local Three.js viewport only as an opt-in preview or development experiment, not as the default public path. This mode runs in the viewer's browser and can use local CPU/GPU resources.
 
 Current scope:
 
@@ -38,8 +63,9 @@ Boundary:
 - This is an embodied visual model, not a live society runtime.
 - Geometry is intentionally lightweight and neutral.
 - Private modules should still enter only through explicit event manifests.
+- This path should stay disabled unless a developer explicitly opts into local preview.
 
-## 3. Hugging Face MCP Path
+## 4. Hugging Face MCP Path
 
 Hugging Face MCP or similar model endpoints can be used as a render lane for concept images when the goal is fast exploration.
 
@@ -53,7 +79,7 @@ Recommended use:
 
 This path is useful because it can produce cinematic scene variety faster than a full 3D scene build.
 
-## 4. Windows Blender Render Node
+## 5. Windows Blender Render Node
 
 The Windows render node should be used when the scene needs to become reproducible, animated, or tied to future `observer_slices -> render_shotlist` output.
 

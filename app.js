@@ -1,7 +1,8 @@
-const THREE = window.THREE;
+const LOCAL_3D_ENABLED = false;
+const THREE = window.THREE || null;
 
-if (!THREE) {
-  throw new Error("Three.js failed to load.");
+function vector3(x = 0, y = 0, z = 0) {
+  return THREE ? new THREE.Vector3(x, y, z) : null;
 }
 
 const modules = [
@@ -371,16 +372,24 @@ const currentEventLabel = document.querySelector("#currentEventLabel");
 const activeEventTime = document.querySelector("#activeEventTime");
 const activeEventTitle = document.querySelector("#activeEventTitle");
 const activeEventSummary = document.querySelector("#activeEventSummary");
+const coreAgentName = document.querySelector("#coreAgentName");
+const coreAgentRole = document.querySelector("#coreAgentRole");
+const coreTime = document.querySelector("#coreTime");
+const corePhase = document.querySelector("#corePhase");
+const coreView = document.querySelector("#coreView");
+const coreRenderMode = document.querySelector("#coreRenderMode");
+const coreThought = document.querySelector("#coreThought");
+const coreEvent = document.querySelector("#coreEvent");
 
 const world = {
   ready: false,
   renderer: null,
   scene: null,
   camera: null,
-  clock: new THREE.Clock(),
-  cameraLookAt: new THREE.Vector3(0, 0.4, 0),
-  targetPosition: new THREE.Vector3(8.8, 10.5, 8.2),
-  targetLookAt: new THREE.Vector3(0, 0.2, 0),
+  clock: THREE ? new THREE.Clock() : null,
+  cameraLookAt: vector3(0, 0.4, 0),
+  targetPosition: vector3(8.8, 10.5, 8.2),
+  targetLookAt: vector3(0, 0.2, 0),
   groundMaterial: null,
   roadMaterial: null,
   buildingMaterial: null,
@@ -535,6 +544,7 @@ function syncTimeline() {
     const preset = timePresets.find((item) => item.id === button.dataset.preset);
     button.classList.toggle("is-active", preset && getDayPhase(preset.time).id === activePhase);
   });
+  updateCoreStatus();
 }
 
 function selectModule(moduleId) {
@@ -567,6 +577,7 @@ function syncModule() {
   document.querySelectorAll(".module-card").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.module === activeModule.id);
   });
+  updateCoreStatus();
 }
 
 function selectPerspective(viewId) {
@@ -581,6 +592,7 @@ function selectPerspective(viewId) {
     item.classList.toggle("is-active", item.dataset.view === activePerspective);
   });
   syncModule();
+  updateCoreStatus();
   syncAgentFocus();
   setCameraTarget();
 }
@@ -598,6 +610,7 @@ function syncAgent() {
   });
 
   syncAgentFocus();
+  updateCoreStatus();
 }
 
 function formatClock(minutes) {
@@ -626,20 +639,38 @@ function updateClock() {
   applySceneTime(phase, activeMinutes);
   applyTimelineSceneState();
   syncTimeline();
+  updateCoreStatus();
 }
 
 function togglePlay() {
   isPlaying = !isPlaying;
-  playButton.textContent = isPlaying ? "Pause Slice" : "Play Slice";
+  playButton.textContent = isPlaying ? "Pause Timeline" : "Play Timeline";
 
   if (isPlaying) {
     timer = window.setInterval(() => {
       const next = (Number(timeScrubber.value) + 10) % 1440;
       timeScrubber.value = String(next);
       updateClock();
-    }, 650);
+    }, 1000);
   } else {
     window.clearInterval(timer);
+  }
+}
+
+function updateCoreStatus() {
+  const phase = getDayPhase(activeMinutes);
+  const perspective = perspectives[activePerspective];
+  if (coreAgentName) coreAgentName.textContent = activeAgent.name;
+  if (coreAgentRole) coreAgentRole.textContent = activeAgent.role;
+  if (coreTime) coreTime.textContent = formatClock(activeMinutes);
+  if (corePhase) corePhase.textContent = phase.label;
+  if (coreView) coreView.textContent = perspective?.label || activePerspective;
+  if (coreRenderMode) coreRenderMode.textContent = "vendor frame / GPU idle";
+  if (coreThought) coreThought.textContent = activeAgent.question;
+  if (coreEvent) {
+    coreEvent.textContent = activeTimelineEvent
+      ? `${formatClock(activeTimelineEvent.time)} / ${activeTimelineEvent.title}`
+      : activeModule.summary;
   }
 }
 
@@ -679,7 +710,7 @@ function createLine(points, color, opacity = 0.44) {
 }
 
 function initScene() {
-  if (!canvas) return;
+  if (!LOCAL_3D_ENABLED || !THREE || !canvas) return;
 
   world.renderer = new THREE.WebGLRenderer({
     canvas,
@@ -787,6 +818,41 @@ function initScene() {
     }
   };
   animate();
+}
+
+function initVendorFrameMode() {
+  world.ready = false;
+  if (canvas) {
+    canvas.setAttribute("hidden", "");
+  }
+  worldStage.classList.remove("is-3d-ready");
+  worldStage.classList.add("is-vendor-frame");
+  worldStage.dataset.renderMode = "vendor-frame";
+  stageImage.style.opacity = "1";
+  updateCoreStatus();
+  window.__SSO3D_DEBUG__ = {
+    get ready() {
+      return false;
+    },
+    get renderMode() {
+      return "vendor-frame";
+    },
+    get localRenderLoop() {
+      return false;
+    },
+    get usesLocalWebGL() {
+      return false;
+    },
+    get activePerspective() {
+      return activePerspective;
+    },
+    get activeTime() {
+      return formatClock(activeMinutes);
+    },
+    get activeEvent() {
+      return activeTimelineEvent?.id;
+    }
+  };
 }
 
 function addRoads(city) {
@@ -1179,9 +1245,15 @@ setActiveTimelineEvent(activeTimelineEvent);
 syncModule();
 syncAgent();
 
-try {
-  initScene();
-} catch (error) {
-  console.error("3D viewport failed to start; using fallback render image.", error);
-  updateClock();
+initVendorFrameMode();
+updateClock();
+
+if (LOCAL_3D_ENABLED) {
+  try {
+    initScene();
+  } catch (error) {
+    console.error("3D viewport failed to start; using fallback render image.", error);
+    initVendorFrameMode();
+    updateClock();
+  }
 }

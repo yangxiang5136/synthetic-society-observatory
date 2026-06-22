@@ -19,19 +19,18 @@ The current version is a local static prototype:
 index.html
 styles.css
 app.js
-vendor/three.min.js
 assets/cyberpunk-observatory-viewport.png
 ```
 
-Open `index.html` in a browser to view the V0 console. The main viewport is an interactive Three.js stage with:
+Open `index.html` in a browser to view the V0 console. The default viewport is a fixed, non-scrolling observatory interface that displays pre-rendered or vendor-rendered frames instead of running a local WebGL render loop.
 
-- overview, observer, and first-person camera modes;
-- a modular 3D city slice with buildings, roads, visible agents, event core, and cause lines;
+- overview, observer, and first-person view modes;
 - a 00:00-23:59 time scrubber;
-- day, dusk, and night lighting linked to the timeline.
-- event playback nodes that jump the timeline, switch the active module/agent, and change 3D diffusion intensity.
+- dawn, day, dusk, and night states linked to the timeline;
+- event playback nodes that jump the timeline and switch the active module/agent;
+- a compact core-status overlay for the selected agent, current time, current view, and current thought/event.
 
-The rendered images in `assets/` remain fallback and style-reference assets. They are not treated as live simulation proof.
+The rendered images in `assets/` are viewport assets and style references. They are not treated as live simulation proof. Future 3D work should produce frames, clips, or frame manifests through a remote/vendor render lane, then let this public UI display the returned assets.
 
 ## Module Isolation Policy
 
@@ -87,6 +86,7 @@ This repository should not contain:
 - V0: visual console and module/event isolation.
 - V0.2: interactive 3D viewport, camera modes, and timeline-linked lighting.
 - V0.3: event playback timeline with current-event highlighting and scene diffusion states.
+- V0.4: fixed one-screen console and default vendor-frame display mode with local WebGL disabled.
 - V1: load module manifests from JSON.
 - V2: connect synthetic population slices and event logs.
 - V3: export observer slices to rendered shots.
