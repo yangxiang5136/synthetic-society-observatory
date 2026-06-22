@@ -22,9 +22,9 @@
         <section class="run-controls" aria-label="Run controls">
           <button id="playButton" class="control-button primary" type="button">Play Slice</button>
           <div class="mode-tabs" role="tablist" aria-label="View mode">
-            <button class="mode-tab is-active" type="button" data-view="world">World</button>
-            <button class="mode-tab" type="button" data-view="impact">Impact</button>
-            <button class="mode-tab" type="button" data-view="module">Module</button>
+            <button class="mode-tab is-active" type="button" data-view="overview">Overview</button>
+            <button class="mode-tab" type="button" data-view="street">Street</button>
+            <button class="mode-tab" type="button" data-view="deck">Deck</button>
           </div>
           <label class="scrub-control" for="timeScrubber">
             <span id="clockLabel">T+09:40</span>
@@ -36,6 +36,7 @@
       <section class="observatory-stage" aria-label="Visual observatory stage">
         <section class="world-stage" aria-label="Synthetic society viewport">
           <img
+            id="stageImage"
             src="assets/cyberpunk-observatory-viewport.png"
             alt="Neutral cyberpunk miniature synthetic society observatory viewport"
           />
@@ -43,7 +44,7 @@
           <div class="stage-scrim" aria-hidden="true"></div>
 
           <div class="stage-chip stage-location">
-            <span>observer slice</span>
+            <span id="viewModeLabel">overview slice</span>
             <strong id="activeLocation">mixed-use district / public test window</strong>
           </div>
 
@@ -51,6 +52,11 @@
             <span>public-safe seed</span>
             <span>no private modules</span>
             <span>staged observer UI</span>
+          </div>
+
+          <div class="stage-chip stage-perspective">
+            <span>perspective</span>
+            <strong id="perspectiveSummary">high-dimensional social overview</strong>
           </div>
 
           <aside class="module-dock glass-panel" aria-label="Event injector">

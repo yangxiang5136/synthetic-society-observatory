@@ -299,6 +299,17 @@ h2 {
   padding: 7px;
 }
 
+.stage-perspective {
+  top: 86px;
+  left: 20px;
+  padding: 9px 13px;
+  border-radius: 18px;
+}
+
+.stage-perspective span {
+  margin-bottom: 5px;
+}
+
 .stage-boundary span {
   border-radius: 999px;
   padding: 7px 10px;
@@ -335,6 +346,32 @@ h2 {
 .module-beacon strong {
   margin: 6px 0;
   font-size: 16px;
+}
+
+.world-stage[data-perspective="street"] .stage-scrim {
+  background:
+    linear-gradient(90deg, rgba(5, 7, 9, 0.5), transparent 18%, transparent 72%, rgba(5, 7, 9, 0.44)),
+    linear-gradient(0deg, rgba(5, 7, 9, 0.6), transparent 42%);
+}
+
+.world-stage[data-perspective="street"] .module-dock {
+  opacity: 0.84;
+}
+
+.world-stage[data-perspective="deck"] .stage-scrim {
+  background:
+    linear-gradient(90deg, rgba(5, 7, 9, 0.3), transparent 22%, transparent 78%, rgba(5, 7, 9, 0.3)),
+    linear-gradient(0deg, rgba(5, 7, 9, 0.35), transparent 48%);
+}
+
+.world-stage[data-perspective="deck"] .module-dock,
+.world-stage[data-perspective="deck"] .lens-dock,
+.world-stage[data-perspective="deck"] .stage-location,
+.world-stage[data-perspective="deck"] .stage-boundary,
+.world-stage[data-perspective="deck"] .stage-perspective,
+.world-stage[data-perspective="deck"] .module-beacon {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .panel-title {
@@ -677,14 +714,16 @@ h2 {
   .stage-chip,
   .module-dock,
   .lens-dock,
-  .module-beacon {
+  .module-beacon,
+  .stage-perspective {
     position: static;
     width: auto;
     transform: none;
   }
 
   .stage-boundary,
-  .stage-location {
+  .stage-location,
+  .stage-perspective {
     border-radius: 18px;
   }
 
@@ -703,6 +742,15 @@ h2 {
 
   .lens-dock {
     order: 5;
+  }
+
+  .world-stage[data-perspective="deck"] .module-dock,
+  .world-stage[data-perspective="deck"] .lens-dock,
+  .world-stage[data-perspective="deck"] .stage-location,
+  .world-stage[data-perspective="deck"] .stage-boundary,
+  .world-stage[data-perspective="deck"] .stage-perspective,
+  .world-stage[data-perspective="deck"] .module-beacon {
+    display: none;
   }
 
   .semantic-ribbon {

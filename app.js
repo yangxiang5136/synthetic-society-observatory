@@ -143,8 +143,42 @@ const agents = [
   }
 ];
 
+const perspectives = {
+  overview: {
+    image: "assets/cyberpunk-observatory-viewport.png",
+    alt: "Neutral miniature cyberpunk synthetic society overview",
+    label: "overview slice",
+    location: "mixed-use district / public test window",
+    summary: "high-dimensional social overview",
+    eventPrefix: "A module enters the full population map",
+    ontologyPrefix: "Overview shows which agent clusters reinterpret it first",
+    responsePrefix: "Diffusion, delay, workaround, and rejection can be compared at once"
+  },
+  street: {
+    image: "assets/street-event-wide.png",
+    alt: "Neutral cinematic street-level public notice event",
+    label: "street slice",
+    location: "public street / notice encounter",
+    summary: "cinematic ground-level event view",
+    eventPrefix: "The same module appears as a public notice in the street",
+    ontologyPrefix: "People encounter it through crowd mood, urgency, and local trust",
+    responsePrefix: "Street view reveals hesitation, attention, and social proof"
+  },
+  deck: {
+    image: "assets/observer-deck-view.png",
+    alt: "Neutral observer deck cinematic interface view",
+    label: "observer deck",
+    location: "glass deck / city-scale causal view",
+    summary: "cinematic observer control room",
+    eventPrefix: "The observer deck frames the event as a slice to replay",
+    ontologyPrefix: "Deck view emphasizes lenses, cause links, and selected agents",
+    responsePrefix: "This mode is for public video framing, not live-runtime proof"
+  }
+};
+
 let activeModule = modules[0];
 let activeAgent = agents[0];
+let activePerspective = "overview";
 let isPlaying = false;
 let timer = null;
 
@@ -154,6 +188,10 @@ const impactRows = document.querySelector("#impactRows");
 const playButton = document.querySelector("#playButton");
 const clockLabel = document.querySelector("#clockLabel");
 const timeScrubber = document.querySelector("#timeScrubber");
+const stageImage = document.querySelector("#stageImage");
+const worldStage = document.querySelector(".world-stage");
+const perspectiveSummary = document.querySelector("#perspectiveSummary");
+const viewModeLabel = document.querySelector("#viewModeLabel");
 
 function renderModules() {
   moduleRack.innerHTML = "";
@@ -223,18 +261,33 @@ function syncModule() {
   if (scenarioTitle) {
     scenarioTitle.textContent = activeModule.title;
   }
-  document.querySelector("#activeLocation").textContent = activeModule.location;
+  const perspective = perspectives[activePerspective];
+  document.querySelector("#activeLocation").textContent = perspective.location;
   document.querySelector("#activeModuleType").textContent = activeModule.type;
   document.querySelector("#activeModuleName").textContent = activeModule.name;
   document.querySelector("#activeModulePayload").textContent = activeModule.payload;
-  document.querySelector("#eventSummary").textContent = activeModule.summary;
-  document.querySelector("#ontologySummary").textContent = activeModule.ontology;
-  document.querySelector("#responseSummary").textContent = activeModule.response;
+  document.querySelector("#eventSummary").textContent = perspective.eventPrefix;
+  document.querySelector("#ontologySummary").textContent = perspective.ontologyPrefix;
+  document.querySelector("#responseSummary").textContent = perspective.responsePrefix;
   renderImpactRows();
 
   document.querySelectorAll(".module-card").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.module === activeModule.id);
   });
+}
+
+function selectPerspective(viewId) {
+  activePerspective = perspectives[viewId] ? viewId : "overview";
+  const perspective = perspectives[activePerspective];
+  stageImage.src = perspective.image;
+  stageImage.alt = perspective.alt;
+  worldStage.dataset.perspective = activePerspective;
+  perspectiveSummary.textContent = perspective.summary;
+  viewModeLabel.textContent = perspective.label;
+  document.querySelectorAll("[data-view]").forEach((item) => {
+    item.classList.toggle("is-active", item.dataset.view === activePerspective);
+  });
+  syncModule();
 }
 
 function syncAgent() {
@@ -273,10 +326,7 @@ function togglePlay() {
 }
 
 document.querySelectorAll("[data-view]").forEach((button) => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll("[data-view]").forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
-  });
+  button.addEventListener("click", () => selectPerspective(button.dataset.view));
 });
 
 timeScrubber.addEventListener("input", updateClock);
@@ -284,6 +334,7 @@ playButton.addEventListener("click", togglePlay);
 
 renderModules();
 renderAgents();
+selectPerspective(activePerspective);
 syncModule();
 syncAgent();
 updateClock();
