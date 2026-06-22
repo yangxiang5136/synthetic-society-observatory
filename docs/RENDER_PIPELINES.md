@@ -30,6 +30,7 @@ Current scope:
 - overview, observer, and first-person cameras;
 - 00:00-23:59 timeline;
 - day, dusk, and night lighting linked to the timeline;
+- event playback nodes linked to active module, active agent, and scene diffusion intensity;
 - fallback images if the 3D stage cannot start.
 
 Boundary:

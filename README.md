@@ -29,6 +29,7 @@ Open `index.html` in a browser to view the V0 console. The main viewport is an i
 - a modular 3D city slice with buildings, roads, visible agents, event core, and cause lines;
 - a 00:00-23:59 time scrubber;
 - day, dusk, and night lighting linked to the timeline.
+- event playback nodes that jump the timeline, switch the active module/agent, and change 3D diffusion intensity.
 
 The rendered images in `assets/` remain fallback and style-reference assets. They are not treated as live simulation proof.
 
@@ -85,6 +86,7 @@ This repository should not contain:
 
 - V0: visual console and module/event isolation.
 - V0.2: interactive 3D viewport, camera modes, and timeline-linked lighting.
+- V0.3: event playback timeline with current-event highlighting and scene diffusion states.
 - V1: load module manifests from JSON.
 - V2: connect synthetic population slices and event logs.
 - V3: export observer slices to rendered shots.

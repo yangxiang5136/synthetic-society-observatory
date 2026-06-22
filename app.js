@@ -275,9 +275,80 @@ const dayPhases = [
   }
 ];
 
+const timelineEvents = [
+  {
+    id: "evt-dawn-exposure",
+    time: 390,
+    moduleId: "software-helper",
+    agentId: "agent-005",
+    title: "Quiet morning exposure",
+    summary: "A small service-desk note becomes visible before the district reaches full activity.",
+    color: "#6fb7e8",
+    intensity: 0.56,
+    duration: 210,
+    focusAgents: ["agent-005", "agent-001", "agent-007"]
+  },
+  {
+    id: "evt-day-trial",
+    time: 720,
+    moduleId: "hardware-sensor",
+    agentId: "agent-002",
+    title: "Hands-on trial window",
+    summary: "A tangible module is inspected during the day, making comfort, privacy, and utility visible.",
+    color: "#4cc8a6",
+    intensity: 0.68,
+    duration: 260,
+    focusAgents: ["agent-002", "agent-004", "agent-006"]
+  },
+  {
+    id: "evt-dusk-retype",
+    time: 1080,
+    moduleId: "public-policy",
+    agentId: "agent-007",
+    title: "Semantic retyping spike",
+    summary: "A neutral rule update is reclassified by different agents as fairness, burden, or workaround risk.",
+    color: "#b49bff",
+    intensity: 0.88,
+    duration: 170,
+    focusAgents: ["agent-007", "agent-003", "agent-008"]
+  },
+  {
+    id: "evt-night-diffusion",
+    time: 1180,
+    moduleId: "software-helper",
+    agentId: "agent-001",
+    title: "Night diffusion check",
+    summary: "The same event is tested under time pressure, where fallback paths and peer trust matter more.",
+    color: "#f0b860",
+    intensity: 1,
+    duration: 190,
+    focusAgents: ["agent-001", "agent-004", "agent-005", "agent-006"]
+  },
+  {
+    id: "evt-late-workaround",
+    time: 1320,
+    moduleId: "hardware-sensor",
+    agentId: "agent-004",
+    title: "Late workaround path",
+    summary: "Some agents accept the module as useful, while others route around it or wait for clearer proof.",
+    color: "#f07a63",
+    intensity: 0.74,
+    duration: 160,
+    focusAgents: ["agent-004", "agent-003", "agent-008"]
+  }
+];
+
+const timePresets = [
+  { id: "preset-dawn", label: "Dawn", time: 390, detail: "low haze" },
+  { id: "preset-day", label: "Day", time: 720, detail: "readable city" },
+  { id: "preset-dusk", label: "Dusk", time: 1080, detail: "semantic glow" },
+  { id: "preset-night", label: "Night", time: 1180, detail: "neon city" }
+];
+
 let activeModule = modules[0];
 let activeAgent = agents[0];
 let activePerspective = "overview";
+let activeTimelineEvent = timelineEvents[3];
 let activeMinutes = 1180;
 let isPlaying = false;
 let timer = null;
@@ -294,6 +365,12 @@ const worldStage = document.querySelector(".world-stage");
 const perspectiveSummary = document.querySelector("#perspectiveSummary");
 const viewModeLabel = document.querySelector("#viewModeLabel");
 const canvas = document.querySelector("#worldCanvas");
+const timelineTrack = document.querySelector("#timelineTrack");
+const timePresetsContainer = document.querySelector("#timePresets");
+const currentEventLabel = document.querySelector("#currentEventLabel");
+const activeEventTime = document.querySelector("#activeEventTime");
+const activeEventTitle = document.querySelector("#activeEventTitle");
+const activeEventSummary = document.querySelector("#activeEventSummary");
 
 const world = {
   ready: false,
@@ -370,6 +447,93 @@ function renderImpactRows() {
       <strong>${value}%</strong>
     `;
     impactRows.appendChild(row);
+  });
+}
+
+function renderTimeline() {
+  timelineTrack.innerHTML = "";
+  timelineEvents.forEach((event) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "timeline-event";
+    button.dataset.event = event.id;
+    button.dataset.time = formatClock(event.time);
+    button.style.setProperty("--event-position", `${(event.time / 1439) * 100}%`);
+    button.style.setProperty("--event-color", event.color);
+    button.setAttribute("aria-label", `${formatClock(event.time)} ${event.title}`);
+    button.addEventListener("click", () => jumpToTimelineEvent(event.id));
+    timelineTrack.appendChild(button);
+  });
+
+  timePresetsContainer.innerHTML = "";
+  timePresets.forEach((preset) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "time-preset";
+    button.dataset.preset = preset.id;
+    button.innerHTML = `
+      <strong>${preset.label}</strong>
+      <span>${formatClock(preset.time)} / ${preset.detail}</span>
+    `;
+    button.addEventListener("click", () => jumpToTime(preset.time));
+    timePresetsContainer.appendChild(button);
+  });
+}
+
+function getTimelineEventByTime(minutes) {
+  const normalized = ((minutes % 1440) + 1440) % 1440;
+  let selected = timelineEvents[timelineEvents.length - 1];
+  timelineEvents.forEach((event) => {
+    if (normalized >= event.time) {
+      selected = event;
+    }
+  });
+  return selected;
+}
+
+function setActiveTimelineEvent(event) {
+  if (!event) return;
+  activeTimelineEvent = event;
+  activeModule = modules.find((module) => module.id === event.moduleId) || activeModule;
+  activeAgent = agents.find((agent) => agent.id === event.agentId) || activeAgent;
+  syncModule();
+  syncAgent();
+  syncSceneModule();
+  syncTimeline();
+  applyTimelineSceneState();
+  setCameraTarget();
+}
+
+function jumpToTimelineEvent(eventId) {
+  const event = timelineEvents.find((item) => item.id === eventId);
+  if (!event) return;
+  timeScrubber.value = String(event.time);
+  activeMinutes = event.time;
+  setActiveTimelineEvent(event);
+  updateClock();
+}
+
+function jumpToTime(minutes) {
+  timeScrubber.value = String(minutes);
+  activeMinutes = minutes;
+  updateClock();
+}
+
+function syncTimeline() {
+  if (!activeTimelineEvent) return;
+  currentEventLabel.textContent = `Current event: ${activeTimelineEvent.title}`;
+  activeEventTime.textContent = formatClock(activeTimelineEvent.time);
+  activeEventTitle.textContent = activeTimelineEvent.title;
+  activeEventSummary.textContent = activeTimelineEvent.summary;
+
+  document.querySelectorAll(".timeline-event").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.event === activeTimelineEvent.id);
+  });
+
+  const activePhase = getDayPhase(activeMinutes).id;
+  document.querySelectorAll(".time-preset").forEach((button) => {
+    const preset = timePresets.find((item) => item.id === button.dataset.preset);
+    button.classList.toggle("is-active", preset && getDayPhase(preset.time).id === activePhase);
   });
 }
 
@@ -451,11 +615,17 @@ function getDayPhase(minutes) {
 function updateClock() {
   activeMinutes = Number(timeScrubber.value);
   const phase = getDayPhase(activeMinutes);
+  const event = getTimelineEventByTime(activeMinutes);
+  if (event && event.id !== activeTimelineEvent?.id) {
+    setActiveTimelineEvent(event);
+  }
   clockLabel.textContent = formatClock(activeMinutes);
   dayPhaseLabel.textContent = phase.label;
   worldStage.dataset.timePhase = phase.id;
   document.body.dataset.timePhase = phase.id;
   applySceneTime(phase, activeMinutes);
+  applyTimelineSceneState();
+  syncTimeline();
 }
 
 function togglePlay() {
@@ -608,6 +778,9 @@ function initScene() {
     },
     get activeTime() {
       return formatClock(activeMinutes);
+    },
+    get activeEvent() {
+      return activeTimelineEvent?.id;
     },
     get objectCount() {
       return world.scene?.children.length ?? 0;
@@ -906,6 +1079,52 @@ function applySceneTime(phase, minutes) {
   });
 }
 
+function getTimelineIntensity() {
+  if (!activeTimelineEvent) return 1;
+  const age = Math.max(0, activeMinutes - activeTimelineEvent.time);
+  const freshness = Math.max(0.38, 1 - age / activeTimelineEvent.duration);
+  return activeTimelineEvent.intensity * freshness;
+}
+
+function applyTimelineSceneState() {
+  if (!world.ready || !activeTimelineEvent) return;
+  const phase = getDayPhase(activeMinutes);
+  const intensity = getTimelineIntensity();
+  const eventColor = new THREE.Color(activeTimelineEvent.color);
+  const moduleColor = new THREE.Color(activeModule.visual.color);
+  const blendedColor = moduleColor.lerp(eventColor, 0.38);
+
+  world.eventMaterial.color.copy(blendedColor);
+  world.eventMaterial.opacity = Math.min(1, 0.42 + intensity * 0.48);
+  if (world.eventBeamMaterial) {
+    world.eventBeamMaterial.color.copy(blendedColor);
+    world.eventBeamMaterial.opacity = (phase.id === "day" ? 0.08 : 0.28) * (0.65 + intensity);
+  }
+  if (world.eventLight) {
+    world.eventLight.color.copy(blendedColor);
+    world.eventLight.intensity = phase.event * (0.72 + intensity * 0.72);
+  }
+  if (world.eventGroup) {
+    const scale = 1 + intensity * 0.09;
+    world.eventGroup.scale.set(scale, scale, scale);
+  }
+
+  world.agentObjects.forEach((object, agentId) => {
+    const focused = activeTimelineEvent.focusAgents.includes(agentId);
+    const selected = agentId === activeAgent.id;
+    object.light.intensity *= focused ? 1.55 : 0.7;
+    object.haloMaterial.opacity = focused ? (selected ? 0.95 : 0.72) : 0.28;
+    object.group.scale.setScalar(selected ? 1.42 : focused ? 1.16 : 0.94);
+  });
+
+  world.connectionLines.forEach((line, agentId) => {
+    const focused = activeTimelineEvent.focusAgents.includes(agentId);
+    const selected = agentId === activeAgent.id;
+    line.material.color.set(selected ? activeModule.visual.accent : focused ? activeTimelineEvent.color : agents.find((agent) => agent.id === agentId)?.color);
+    line.material.opacity = selected ? 0.96 : focused ? 0.64 : 0.14;
+  });
+}
+
 function resizeRenderer() {
   if (!world.renderer || !world.camera || !canvas) return;
   const width = Math.max(1, canvas.clientWidth);
@@ -954,7 +1173,9 @@ playButton.addEventListener("click", togglePlay);
 
 renderModules();
 renderAgents();
+renderTimeline();
 selectPerspective(activePerspective);
+setActiveTimelineEvent(activeTimelineEvent);
 syncModule();
 syncAgent();
 
