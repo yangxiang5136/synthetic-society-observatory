@@ -164,7 +164,7 @@ h2 {
 .mode-tabs {
   min-height: 42px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(72px, auto));
+  grid-template-columns: repeat(3, minmax(88px, auto));
   gap: 3px;
   border: 1px solid var(--hairline);
   border-radius: 999px;
@@ -186,7 +186,7 @@ h2 {
 
 .scrub-control {
   min-height: 42px;
-  min-width: 238px;
+  min-width: 330px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -200,6 +200,12 @@ h2 {
   color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
+}
+
+.scrub-control .phase-label {
+  min-width: 104px;
+  color: var(--amber);
+  text-align: right;
 }
 
 .scrub-control input {
@@ -226,13 +232,50 @@ h2 {
   isolation: isolate;
 }
 
-.world-stage img {
+.world-canvas,
+.stage-fallback {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: inherit;
   display: block;
+}
+
+.world-canvas {
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 360ms ease;
+}
+
+.stage-fallback {
+  z-index: 0;
   object-fit: cover;
   filter: saturate(1.05) contrast(1.04);
+  opacity: 1;
+  transition: opacity 360ms ease;
+}
+
+.world-stage.is-3d-ready .world-canvas {
+  opacity: 1;
+}
+
+.world-stage.is-3d-ready .stage-fallback {
+  opacity: 0;
+}
+
+.world-stage[data-time-phase="day"] {
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.36),
+    0 0 42px rgba(111, 183, 232, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.world-stage[data-time-phase="dusk"],
+.world-stage[data-time-phase="night"] {
+  box-shadow:
+    0 30px 78px rgba(0, 0, 0, 0.48),
+    0 0 52px rgba(180, 155, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .stage-scrim {
@@ -354,24 +397,25 @@ h2 {
     linear-gradient(0deg, rgba(5, 7, 9, 0.6), transparent 42%);
 }
 
-.world-stage[data-perspective="street"] .module-dock {
+.world-stage[data-perspective="first"] .stage-scrim {
+  background:
+    linear-gradient(90deg, rgba(5, 7, 9, 0.42), transparent 24%, transparent 76%, rgba(5, 7, 9, 0.48)),
+    linear-gradient(0deg, rgba(5, 7, 9, 0.54), transparent 52%);
+}
+
+.world-stage[data-perspective="first"] .module-dock {
   opacity: 0.84;
 }
 
-.world-stage[data-perspective="deck"] .stage-scrim {
+.world-stage[data-perspective="observer"] .stage-scrim {
   background:
     linear-gradient(90deg, rgba(5, 7, 9, 0.3), transparent 22%, transparent 78%, rgba(5, 7, 9, 0.3)),
     linear-gradient(0deg, rgba(5, 7, 9, 0.35), transparent 48%);
 }
 
-.world-stage[data-perspective="deck"] .module-dock,
-.world-stage[data-perspective="deck"] .lens-dock,
-.world-stage[data-perspective="deck"] .stage-location,
-.world-stage[data-perspective="deck"] .stage-boundary,
-.world-stage[data-perspective="deck"] .stage-perspective,
-.world-stage[data-perspective="deck"] .module-beacon {
-  opacity: 0;
-  pointer-events: none;
+.world-stage[data-perspective="observer"] .module-dock,
+.world-stage[data-perspective="observer"] .lens-dock {
+  opacity: 0.88;
 }
 
 .panel-title {
@@ -688,12 +732,21 @@ h2 {
     width: 100%;
   }
 
+  .mode-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .scrub-control input {
     width: 100%;
   }
 
+  .scrub-control .phase-label {
+    min-width: 0;
+    text-align: left;
+  }
+
   .world-stage {
-    min-height: auto;
+    min-height: 760px;
     display: grid;
     gap: 10px;
     border-radius: 24px;
@@ -701,10 +754,13 @@ h2 {
     background: rgba(11, 13, 17, 0.96);
   }
 
-  .world-stage img {
-    min-height: 360px;
+  .world-canvas,
+  .stage-fallback {
+    position: relative;
+    min-height: 380px;
     border-radius: 18px;
-    object-fit: cover;
+    grid-row: 1;
+    grid-column: 1;
   }
 
   .stage-scrim {
@@ -742,15 +798,6 @@ h2 {
 
   .lens-dock {
     order: 5;
-  }
-
-  .world-stage[data-perspective="deck"] .module-dock,
-  .world-stage[data-perspective="deck"] .lens-dock,
-  .world-stage[data-perspective="deck"] .stage-location,
-  .world-stage[data-perspective="deck"] .stage-boundary,
-  .world-stage[data-perspective="deck"] .stage-perspective,
-  .world-stage[data-perspective="deck"] .module-beacon {
-    display: none;
   }
 
   .semantic-ribbon {

@@ -20,7 +20,25 @@ Current integrated assets:
 - `assets/street-event-cinematic.webp` - alternate street-level view.
 - `assets/observer-deck-view.png` - observer-deck cinematic UI view.
 
-## 2. Hugging Face MCP Path
+## 2. Interactive 3D Viewport Path
+
+Use the local Three.js viewport when the goal is to make perspective changes and time changes operational inside the public dashboard.
+
+Current scope:
+
+- modular city blocks, roads, agents, event core, and cause lines;
+- overview, observer, and first-person cameras;
+- 00:00-23:59 timeline;
+- day, dusk, and night lighting linked to the timeline;
+- fallback images if the 3D stage cannot start.
+
+Boundary:
+
+- This is an embodied visual model, not a live society runtime.
+- Geometry is intentionally lightweight and neutral.
+- Private modules should still enter only through explicit event manifests.
+
+## 3. Hugging Face MCP Path
 
 Hugging Face MCP or similar model endpoints can be used as a render lane for concept images when the goal is fast exploration.
 
@@ -34,7 +52,7 @@ Recommended use:
 
 This path is useful because it can produce cinematic scene variety faster than a full 3D scene build.
 
-## 3. Windows Blender Render Node
+## 4. Windows Blender Render Node
 
 The Windows render node should be used when the scene needs to become reproducible, animated, or tied to future `observer_slices -> render_shotlist` output.
 

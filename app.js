@@ -1,3 +1,9 @@
+const THREE = window.THREE;
+
+if (!THREE) {
+  throw new Error("Three.js failed to load.");
+}
+
 const modules = [
   {
     id: "software-helper",
@@ -9,6 +15,10 @@ const modules = [
     location: "mixed-use district / public service desk",
     ontology: "Agents classify it through time pressure, setup cost, trust, and fallback options.",
     response: "Early try, cautious delay, peer explanation, and offline workaround appear in parallel.",
+    visual: {
+      color: "#f0b860",
+      accent: "#b49bff"
+    },
     metrics: [
       ["Curiosity", 72],
       ["Setup concern", 48],
@@ -26,6 +36,10 @@ const modules = [
     location: "transit edge / repair counter",
     ontology: "Agents classify it through comfort, battery, privacy, durability, and visible usefulness.",
     response: "Hands-on testers move first; privacy-sensitive agents ask who can see the signal.",
+    visual: {
+      color: "#4cc8a6",
+      accent: "#6fb7e8"
+    },
     metrics: [
       ["Hands-on trial", 68],
       ["Privacy concern", 61],
@@ -43,6 +57,10 @@ const modules = [
     location: "community hub / notice board",
     ontology: "Agents classify it through fairness, inconvenience, authority trust, and workaround paths.",
     response: "Some comply, some seek clarification, some route around the new rule.",
+    visual: {
+      color: "#b49bff",
+      accent: "#f07a63"
+    },
     metrics: [
       ["Compliance", 58],
       ["Clarification need", 73],
@@ -62,7 +80,8 @@ const agents = [
     read: "Classifies the event as useful only if it lowers repeated work without adding setup overhead.",
     question: "Will it save time tonight?",
     action: "tries with a fallback ready",
-    color: "#f2c15f"
+    color: "#f2c15f",
+    position: [-3.6, -2.9]
   },
   {
     id: "agent-002",
@@ -73,7 +92,8 @@ const agents = [
     read: "Treats any module as a thing to inspect, test, and compare against lived device failures.",
     question: "Can I see how it fails?",
     action: "tests the edge case first",
-    color: "#77bfea"
+    color: "#77bfea",
+    position: [2.9, -3.4]
   },
   {
     id: "agent-003",
@@ -84,7 +104,8 @@ const agents = [
     read: "Reads novelty through disruption risk and whether the module makes coordination gentler.",
     question: "Will this interrupt the routine?",
     action: "asks for a low-risk trial",
-    color: "#f17662"
+    color: "#f17662",
+    position: [-4.7, 1.3]
   },
   {
     id: "agent-004",
@@ -95,7 +116,8 @@ const agents = [
     read: "Ranks the event by immediate route value, battery cost, and whether others already trust it.",
     question: "Does this help before the next stop?",
     action: "adopts only if friction is tiny",
-    color: "#4cd5ae"
+    color: "#4cd5ae",
+    position: [4.2, 1.8]
   },
   {
     id: "agent-005",
@@ -106,7 +128,8 @@ const agents = [
     read: "Watches how the event changes questions, queues, and confidence inside a public space.",
     question: "Will customers argue about it?",
     action: "becomes a cautious explainer",
-    color: "#eadc72"
+    color: "#eadc72",
+    position: [0.6, 3.5]
   },
   {
     id: "agent-006",
@@ -117,7 +140,8 @@ const agents = [
     read: "Looks for whether the module can be understood, modified, and used in a small project.",
     question: "Can I adapt it?",
     action: "experiments then shares notes",
-    color: "#b6a2ff"
+    color: "#b6a2ff",
+    position: [-1.2, 4.7]
   },
   {
     id: "agent-007",
@@ -128,7 +152,8 @@ const agents = [
     read: "Converts platform claims into policy, logging, accountability, and support burden questions.",
     question: "Who is responsible if it breaks?",
     action: "requires documentation first",
-    color: "#9bb592"
+    color: "#9bb592",
+    position: [4.8, -0.9]
   },
   {
     id: "agent-008",
@@ -139,7 +164,8 @@ const agents = [
     read: "Reads the event through group flow, social proof, and whether it reduces confusion at scale.",
     question: "Will the group understand it together?",
     action: "pilots it with a small group",
-    color: "#f29bb6"
+    color: "#f29bb6",
+    position: [-5.2, -0.8]
   }
 ];
 
@@ -147,38 +173,112 @@ const perspectives = {
   overview: {
     image: "assets/cyberpunk-observatory-viewport.png",
     alt: "Neutral miniature cyberpunk synthetic society overview",
-    label: "overview slice",
-    location: "mixed-use district / public test window",
-    summary: "high-dimensional social overview",
-    eventPrefix: "A module enters the full population map",
+    label: "god-view slice",
+    location: "mixed-use district / full population map",
+    summary: "high-dimensional 3D overview",
+    eventPrefix: "A module enters the full 3D population map",
     ontologyPrefix: "Overview shows which agent clusters reinterpret it first",
     responsePrefix: "Diffusion, delay, workaround, and rejection can be compared at once"
   },
-  street: {
-    image: "assets/street-event-wide.png",
-    alt: "Neutral cinematic street-level public notice event",
-    label: "street slice",
-    location: "public street / notice encounter",
-    summary: "cinematic ground-level event view",
-    eventPrefix: "The same module appears as a public notice in the street",
-    ontologyPrefix: "People encounter it through crowd mood, urgency, and local trust",
-    responsePrefix: "Street view reveals hesitation, attention, and social proof"
-  },
-  deck: {
+  observer: {
     image: "assets/observer-deck-view.png",
     alt: "Neutral observer deck cinematic interface view",
-    label: "observer deck",
-    location: "glass deck / city-scale causal view",
-    summary: "cinematic observer control room",
-    eventPrefix: "The observer deck frames the event as a slice to replay",
-    ontologyPrefix: "Deck view emphasizes lenses, cause links, and selected agents",
+    label: "observer slice",
+    location: "observer deck / causal replay",
+    summary: "third-person causal camera",
+    eventPrefix: "The observer camera frames the event as a replayable slice",
+    ontologyPrefix: "Observer view emphasizes lenses, cause links, and selected agents",
     responsePrefix: "This mode is for public video framing, not live-runtime proof"
+  },
+  first: {
+    image: "assets/street-event-wide.png",
+    alt: "Neutral cinematic street-level public notice event",
+    label: "first-person slice",
+    location: "street level / selected agent viewpoint",
+    summary: "embodied street-level view",
+    eventPrefix: "The same module appears from inside the street encounter",
+    ontologyPrefix: "The selected agent sees it through urgency, trust, and local context",
+    responsePrefix: "First-person view reveals hesitation, attention, and social proof"
   }
 };
+
+const dayPhases = [
+  {
+    id: "night",
+    label: "night / neon city",
+    start: 0,
+    end: 300,
+    sky: "#060914",
+    fog: "#071023",
+    ambient: 0.32,
+    sun: 0.04,
+    neon: 1.8,
+    window: 1.55,
+    agent: 1.85,
+    event: 4.4
+  },
+  {
+    id: "dawn",
+    label: "dawn / low haze",
+    start: 300,
+    end: 420,
+    sky: "#1a2230",
+    fog: "#293247",
+    ambient: 0.68,
+    sun: 1.15,
+    neon: 1.1,
+    window: 0.8,
+    agent: 1.25,
+    event: 3.4
+  },
+  {
+    id: "day",
+    label: "day / readable city",
+    start: 420,
+    end: 1020,
+    sky: "#607284",
+    fog: "#70869a",
+    ambient: 1.18,
+    sun: 2.2,
+    neon: 0.34,
+    window: 0.2,
+    agent: 0.72,
+    event: 2.5
+  },
+  {
+    id: "dusk",
+    label: "dusk / semantic glow",
+    start: 1020,
+    end: 1140,
+    sky: "#15172c",
+    fog: "#2a2340",
+    ambient: 0.72,
+    sun: 0.95,
+    neon: 1.35,
+    window: 1.1,
+    agent: 1.55,
+    event: 4.0
+  },
+  {
+    id: "night",
+    label: "night / neon city",
+    start: 1140,
+    end: 1440,
+    sky: "#060914",
+    fog: "#071023",
+    ambient: 0.32,
+    sun: 0.04,
+    neon: 1.8,
+    window: 1.55,
+    agent: 1.85,
+    event: 4.4
+  }
+];
 
 let activeModule = modules[0];
 let activeAgent = agents[0];
 let activePerspective = "overview";
+let activeMinutes = 1180;
 let isPlaying = false;
 let timer = null;
 
@@ -187,11 +287,38 @@ const agentRail = document.querySelector("#agentRail");
 const impactRows = document.querySelector("#impactRows");
 const playButton = document.querySelector("#playButton");
 const clockLabel = document.querySelector("#clockLabel");
+const dayPhaseLabel = document.querySelector("#dayPhaseLabel");
 const timeScrubber = document.querySelector("#timeScrubber");
 const stageImage = document.querySelector("#stageImage");
 const worldStage = document.querySelector(".world-stage");
 const perspectiveSummary = document.querySelector("#perspectiveSummary");
 const viewModeLabel = document.querySelector("#viewModeLabel");
+const canvas = document.querySelector("#worldCanvas");
+
+const world = {
+  ready: false,
+  renderer: null,
+  scene: null,
+  camera: null,
+  clock: new THREE.Clock(),
+  cameraLookAt: new THREE.Vector3(0, 0.4, 0),
+  targetPosition: new THREE.Vector3(8.8, 10.5, 8.2),
+  targetLookAt: new THREE.Vector3(0, 0.2, 0),
+  groundMaterial: null,
+  roadMaterial: null,
+  buildingMaterial: null,
+  windowMaterial: null,
+  neonMaterial: null,
+  eventMaterial: null,
+  eventBeamMaterial: null,
+  eventLight: null,
+  sunLight: null,
+  hemisphereLight: null,
+  eventGroup: null,
+  rings: [],
+  agentObjects: new Map(),
+  connectionLines: new Map()
+};
 
 function renderModules() {
   moduleRack.innerHTML = "";
@@ -249,11 +376,13 @@ function renderImpactRows() {
 function selectModule(moduleId) {
   activeModule = modules.find((module) => module.id === moduleId) || modules[0];
   syncModule();
+  syncSceneModule();
 }
 
 function selectAgent(agentId) {
   activeAgent = agents.find((agent) => agent.id === agentId) || agents[0];
   syncAgent();
+  setCameraTarget();
 }
 
 function syncModule() {
@@ -288,6 +417,8 @@ function selectPerspective(viewId) {
     item.classList.toggle("is-active", item.dataset.view === activePerspective);
   });
   syncModule();
+  syncAgentFocus();
+  setCameraTarget();
 }
 
 function syncAgent() {
@@ -301,13 +432,30 @@ function syncAgent() {
   document.querySelectorAll(".agent-button").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.agent === activeAgent.id);
   });
+
+  syncAgentFocus();
+}
+
+function formatClock(minutes) {
+  const normalized = ((minutes % 1440) + 1440) % 1440;
+  const hours = String(Math.floor(normalized / 60)).padStart(2, "0");
+  const mins = String(normalized % 60).padStart(2, "0");
+  return `${hours}:${mins}`;
+}
+
+function getDayPhase(minutes) {
+  const normalized = ((minutes % 1440) + 1440) % 1440;
+  return dayPhases.find((phase) => normalized >= phase.start && normalized < phase.end) || dayPhases[0];
 }
 
 function updateClock() {
-  const minutes = Number(timeScrubber.value);
-  const hours = String(Math.floor(minutes / 60)).padStart(2, "0");
-  const mins = String(minutes % 60).padStart(2, "0");
-  clockLabel.textContent = `T+${hours}:${mins}`;
+  activeMinutes = Number(timeScrubber.value);
+  const phase = getDayPhase(activeMinutes);
+  clockLabel.textContent = formatClock(activeMinutes);
+  dayPhaseLabel.textContent = phase.label;
+  worldStage.dataset.timePhase = phase.id;
+  document.body.dataset.timePhase = phase.id;
+  applySceneTime(phase, activeMinutes);
 }
 
 function togglePlay() {
@@ -316,13 +464,485 @@ function togglePlay() {
 
   if (isPlaying) {
     timer = window.setInterval(() => {
-      const next = (Number(timeScrubber.value) + 10) % 2881;
+      const next = (Number(timeScrubber.value) + 10) % 1440;
       timeScrubber.value = String(next);
       updateClock();
     }, 650);
   } else {
     window.clearInterval(timer);
   }
+}
+
+function createMaterial(color, options = {}) {
+  return new THREE.MeshStandardMaterial({
+    color,
+    roughness: options.roughness ?? 0.62,
+    metalness: options.metalness ?? 0.18,
+    emissive: options.emissive ?? "#000000",
+    emissiveIntensity: options.emissiveIntensity ?? 0,
+    transparent: options.transparent ?? false,
+    opacity: options.opacity ?? 1
+  });
+}
+
+function createGlowMaterial(color, options = {}) {
+  return new THREE.MeshBasicMaterial({
+    color,
+    transparent: options.transparent ?? false,
+    opacity: options.opacity ?? 1,
+    blending: options.blending ?? THREE.NormalBlending,
+    depthWrite: options.depthWrite ?? true,
+    toneMapped: false
+  });
+}
+
+function createLine(points, color, opacity = 0.44) {
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const material = new THREE.LineBasicMaterial({
+    color,
+    transparent: true,
+    opacity,
+    depthWrite: false,
+    depthTest: false
+  });
+  return new THREE.Line(geometry, material);
+}
+
+function initScene() {
+  if (!canvas) return;
+
+  world.renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    alpha: false,
+    preserveDrawingBuffer: true,
+    powerPreference: "high-performance"
+  });
+  world.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  if ("outputColorSpace" in world.renderer && THREE.SRGBColorSpace) {
+    world.renderer.outputColorSpace = THREE.SRGBColorSpace;
+  }
+  if ("outputEncoding" in world.renderer && THREE.sRGBEncoding) {
+    world.renderer.outputEncoding = THREE.sRGBEncoding;
+  }
+  if (THREE.ACESFilmicToneMapping) {
+    world.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  }
+  world.renderer.toneMappingExposure = 1.05;
+
+  world.scene = new THREE.Scene();
+  world.scene.background = new THREE.Color("#060914");
+  world.scene.fog = new THREE.FogExp2("#071023", 0.042);
+
+  world.camera = new THREE.PerspectiveCamera(46, 1, 0.1, 90);
+  world.camera.position.copy(world.targetPosition);
+  world.camera.lookAt(world.cameraLookAt);
+
+  world.hemisphereLight = new THREE.HemisphereLight("#b6cff0", "#16110f", 0.34);
+  world.scene.add(world.hemisphereLight);
+
+  world.sunLight = new THREE.DirectionalLight("#fff1cf", 1.2);
+  world.sunLight.position.set(4, 7, 2);
+  world.scene.add(world.sunLight);
+
+  const city = new THREE.Group();
+  city.name = "synthetic-city-model";
+  world.scene.add(city);
+
+  world.groundMaterial = createMaterial("#141920", { roughness: 0.78, metalness: 0.25 });
+  world.roadMaterial = createMaterial("#0b0f17", {
+    roughness: 0.46,
+    metalness: 0.4,
+    emissive: "#152838",
+    emissiveIntensity: 0.55
+  });
+  world.buildingMaterial = createMaterial("#1a222c", { roughness: 0.62, metalness: 0.28 });
+  world.windowMaterial = createGlowMaterial("#f0b860", {
+    transparent: true,
+    opacity: 0.78,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  world.neonMaterial = createGlowMaterial("#4cc8a6", {
+    transparent: true,
+    opacity: 0.72,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  world.eventMaterial = createGlowMaterial(activeModule.visual.color, {
+    transparent: true,
+    opacity: 1,
+    blending: THREE.NormalBlending,
+    depthWrite: false
+  });
+  world.eventBeamMaterial = createGlowMaterial(activeModule.visual.color, {
+    transparent: true,
+    opacity: 0.3,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(18, 18), world.groundMaterial);
+  ground.rotation.x = -Math.PI / 2;
+  city.add(ground);
+
+  addRoads(city);
+  addBuildings(city);
+  addEventCore(city);
+  addAgents(city);
+
+  setCameraTarget();
+  window.addEventListener("resize", resizeRenderer);
+  world.ready = true;
+  updateClock();
+  syncSceneModule();
+  syncAgentFocus();
+  resizeRenderer();
+  worldStage.classList.add("is-3d-ready");
+  window.__SSO3D_DEBUG__ = {
+    get ready() {
+      return world.ready;
+    },
+    get activePerspective() {
+      return activePerspective;
+    },
+    get activeTime() {
+      return formatClock(activeMinutes);
+    },
+    get objectCount() {
+      return world.scene?.children.length ?? 0;
+    }
+  };
+  animate();
+}
+
+function addRoads(city) {
+  const roadSpecs = [
+    [0, 0, 18, 1.05],
+    [0, -3.8, 18, 0.58],
+    [0, 3.7, 18, 0.58],
+    [-3.4, 0, 0.64, 18],
+    [3.6, 0, 0.64, 18]
+  ];
+
+  roadSpecs.forEach(([x, z, width, depth]) => {
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(width, depth), world.roadMaterial);
+    road.rotation.x = -Math.PI / 2;
+    road.position.set(x, 0.015, z);
+    city.add(road);
+  });
+
+  const gridMaterial = new THREE.LineBasicMaterial({
+    color: "#35506b",
+    transparent: true,
+    opacity: 0.28
+  });
+
+  for (let i = -8; i <= 8; i += 2) {
+    const lineX = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(i, 0.025, -8.5),
+        new THREE.Vector3(i, 0.025, 8.5)
+      ]),
+      gridMaterial
+    );
+    const lineZ = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-8.5, 0.025, i),
+        new THREE.Vector3(8.5, 0.025, i)
+      ]),
+      gridMaterial
+    );
+    city.add(lineX, lineZ);
+  }
+}
+
+function addBuildings(city) {
+  const positions = [
+    [-6.6, -6.3, 1.25, 1.35, 2.2],
+    [-4.7, -5.8, 1.4, 1.1, 1.4],
+    [-1.8, -5.9, 1.8, 1.2, 2.8],
+    [1.7, -6.1, 1.3, 1.4, 1.9],
+    [5.8, -6.0, 1.8, 1.25, 2.7],
+    [-6.2, -2.1, 1.4, 1.8, 3.2],
+    [-1.9, -2.1, 1.5, 1.3, 1.5],
+    [2.2, -2.2, 1.7, 1.4, 3.5],
+    [6.2, -2.0, 1.4, 1.7, 2.4],
+    [-6.4, 2.2, 1.7, 1.3, 2.9],
+    [-1.8, 2.2, 1.3, 1.5, 2.1],
+    [2.4, 2.2, 1.55, 1.5, 3.0],
+    [6.1, 2.1, 1.7, 1.3, 1.8],
+    [-5.7, 6.1, 1.7, 1.3, 2.1],
+    [-1.8, 6.1, 1.4, 1.35, 2.6],
+    [2.2, 6.2, 1.5, 1.45, 2.0],
+    [6.1, 5.9, 1.8, 1.2, 3.4]
+  ];
+
+  positions.forEach(([x, z, width, depth, height], index) => {
+    const building = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), world.buildingMaterial.clone());
+    building.position.set(x, height / 2, z);
+    building.material.color.offsetHSL(0, 0, (index % 4) * 0.018);
+    city.add(building);
+
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(width * 0.72, 0.08, depth * 0.72), world.neonMaterial);
+    cap.position.set(x, height + 0.045, z);
+    city.add(cap);
+
+    for (let row = 0; row < Math.max(1, Math.floor(height * 1.5)); row += 1) {
+      const strip = new THREE.Mesh(new THREE.BoxGeometry(width * 0.62, 0.035, 0.025), world.windowMaterial);
+      strip.position.set(x, 0.42 + row * 0.38, z - depth / 2 - 0.015);
+      city.add(strip);
+    }
+  });
+}
+
+function addEventCore(city) {
+  world.eventGroup = new THREE.Group();
+  world.eventGroup.position.set(0, 0.05, 0);
+  city.add(world.eventGroup);
+
+  const platform = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 1.04, 0.08, 48), world.roadMaterial);
+  platform.position.y = 0.04;
+  world.eventGroup.add(platform);
+
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 16), world.eventMaterial);
+  core.position.y = 0.62;
+  world.eventGroup.add(core);
+
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.28, 3.2, 32, 1, true), world.eventBeamMaterial);
+  beam.position.y = 1.66;
+  world.eventGroup.add(beam);
+
+  for (let i = 0; i < 3; i += 1) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.54 + i * 0.32, 0.018, 12, 72), world.eventMaterial);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = 0.08 + i * 0.035;
+    ring.userData.speed = 0.26 + i * 0.14;
+    world.rings.push(ring);
+    world.eventGroup.add(ring);
+  }
+
+  world.eventLight = new THREE.PointLight(activeModule.visual.color, 4.2, 12, 1.4);
+  world.eventLight.position.set(0, 2.2, 0);
+  city.add(world.eventLight);
+}
+
+function addAgents(city) {
+  const center = new THREE.Vector3(0, 1.18, 0);
+
+  agents.forEach((agent) => {
+    const color = new THREE.Color(agent.color);
+    const material = createGlowMaterial(agent.color, {
+      transparent: true,
+      opacity: 0.92,
+      depthWrite: false
+    });
+    const group = new THREE.Group();
+    group.name = agent.id;
+    group.position.set(agent.position[0], 0, agent.position[1]);
+
+    const body = new THREE.Group();
+    const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.44, 14), material);
+    torso.position.y = 0.2;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 10), material);
+    head.position.y = 0.48;
+    body.add(torso, head);
+    body.position.y = 0.42;
+    group.add(body);
+
+    const haloMaterial = new THREE.MeshBasicMaterial({
+      color,
+      transparent: true,
+      opacity: 0.52,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.012, 8, 40), haloMaterial);
+    halo.rotation.x = Math.PI / 2;
+    halo.position.y = 0.045;
+    group.add(halo);
+
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.5, 8), material);
+    stem.position.y = 0.22;
+    group.add(stem);
+
+    const light = new THREE.PointLight(agent.color, 0.55, 2.7, 1.3);
+    light.position.y = 0.65;
+    group.add(light);
+
+    city.add(group);
+
+    const agentPoint = new THREE.Vector3(agent.position[0], 0.92, agent.position[1]);
+    const line = createLine([center, agentPoint], agent.color, 0.42);
+    city.add(line);
+
+    world.agentObjects.set(agent.id, { group, body, halo, light, material, haloMaterial });
+    world.connectionLines.set(agent.id, line);
+  });
+}
+
+function getAgentPosition(agent = activeAgent) {
+  return new THREE.Vector3(agent.position[0], 0, agent.position[1]);
+}
+
+function resolveCameraPreset() {
+  const agentPosition = getAgentPosition(activeAgent);
+  if (activePerspective === "first") {
+    const awayFromCenter = agentPosition.clone().normalize();
+    if (awayFromCenter.lengthSq() < 0.01) {
+      awayFromCenter.set(0, 0, 1);
+    }
+    return {
+      fov: 64,
+      position: new THREE.Vector3(agentPosition.x, 1.22, agentPosition.z).add(awayFromCenter.multiplyScalar(0.78)),
+      target: new THREE.Vector3(0, 0.66, 0)
+    };
+  }
+
+  if (activePerspective === "observer") {
+    return {
+      fov: 50,
+      position: new THREE.Vector3(6.8, 4.7, 7.2),
+      target: new THREE.Vector3(agentPosition.x * 0.18, 0.55, agentPosition.z * 0.18)
+    };
+  }
+
+  return {
+    fov: 45,
+    position: new THREE.Vector3(8.9, 10.4, 8.4),
+    target: new THREE.Vector3(0, 0.18, 0)
+  };
+}
+
+function setCameraTarget() {
+  if (!world.camera) return;
+  const preset = resolveCameraPreset();
+  world.targetPosition.copy(preset.position);
+  world.targetLookAt.copy(preset.target);
+  world.camera.fov = preset.fov;
+  world.camera.updateProjectionMatrix();
+}
+
+function syncSceneModule() {
+  if (!world.ready || !world.eventMaterial) return;
+  const color = new THREE.Color(activeModule.visual.color);
+  world.eventMaterial.color.copy(color);
+  if (world.eventMaterial.emissive) {
+    world.eventMaterial.emissive.copy(color);
+  }
+  if (world.eventBeamMaterial) {
+    world.eventBeamMaterial.color.copy(color);
+  }
+  if (world.eventLight) {
+    world.eventLight.color.copy(color);
+  }
+  world.connectionLines.forEach((line, agentId) => {
+    line.material.color.set(agentId === activeAgent.id ? activeModule.visual.accent : agents.find((agent) => agent.id === agentId)?.color);
+  });
+}
+
+function syncAgentFocus() {
+  if (!world.ready) return;
+  world.agentObjects.forEach((object, agentId) => {
+    const selected = agentId === activeAgent.id;
+    object.group.visible = !(activePerspective === "first" && selected);
+    object.group.scale.setScalar(selected ? 1.42 : 1);
+    object.light.intensity = selected ? 1.6 : 0.55;
+    object.haloMaterial.opacity = selected ? 0.82 : 0.48;
+  });
+  world.connectionLines.forEach((line, agentId) => {
+    line.material.opacity = agentId === activeAgent.id ? 0.92 : 0.28;
+    line.material.color.set(agentId === activeAgent.id ? activeModule.visual.accent : agents.find((agent) => agent.id === agentId)?.color);
+  });
+}
+
+function applySceneTime(phase, minutes) {
+  if (!world.ready) return;
+  const skyColor = new THREE.Color(phase.sky);
+  const fogColor = new THREE.Color(phase.fog);
+  world.scene.background.copy(skyColor);
+  world.scene.fog.color.copy(fogColor);
+  world.hemisphereLight.intensity = phase.ambient;
+  world.sunLight.intensity = phase.sun;
+
+  const angle = (minutes / 1440) * Math.PI * 2 - Math.PI / 2;
+  const sunHeight = Math.max(Math.sin(angle) * 8, phase.id === "night" ? 0.4 : 1.1);
+  world.sunLight.position.set(Math.cos(angle) * 7, sunHeight, Math.sin(angle) * 4);
+  world.sunLight.color.set(phase.id === "dusk" ? "#ffd0a3" : "#fff1cf");
+
+  world.roadMaterial.emissiveIntensity = phase.neon * 0.38;
+  if ("emissiveIntensity" in world.windowMaterial) {
+    world.windowMaterial.emissiveIntensity = phase.window;
+  }
+  if ("opacity" in world.windowMaterial) {
+    world.windowMaterial.opacity = Math.min(0.95, 0.16 + phase.window * 0.44);
+  }
+  if ("emissiveIntensity" in world.neonMaterial) {
+    world.neonMaterial.emissiveIntensity = phase.neon;
+  }
+  if ("opacity" in world.neonMaterial) {
+    world.neonMaterial.opacity = Math.min(0.9, 0.14 + phase.neon * 0.32);
+  }
+  if ("emissiveIntensity" in world.eventMaterial) {
+    world.eventMaterial.emissiveIntensity = phase.event * 0.62;
+  }
+  if ("opacity" in world.eventMaterial) {
+    world.eventMaterial.opacity = Math.min(1, 0.34 + phase.event * 0.14);
+  }
+  if (world.eventBeamMaterial) {
+    world.eventBeamMaterial.opacity = phase.id === "day" ? 0.1 : 0.3;
+  }
+  world.eventLight.intensity = phase.event;
+
+  world.agentObjects.forEach((object, agentId) => {
+    const selected = agentId === activeAgent.id;
+    if ("emissiveIntensity" in object.material) {
+      object.material.emissiveIntensity = phase.agent * (selected ? 1.18 : 0.72);
+    }
+    if ("opacity" in object.material) {
+      object.material.opacity = Math.min(1, 0.44 + phase.agent * (selected ? 0.28 : 0.2));
+    }
+    object.light.intensity = phase.agent * (selected ? 1.06 : 0.34);
+  });
+}
+
+function resizeRenderer() {
+  if (!world.renderer || !world.camera || !canvas) return;
+  const width = Math.max(1, canvas.clientWidth);
+  const height = Math.max(1, canvas.clientHeight);
+  const size = new THREE.Vector2();
+  world.renderer.getSize(size);
+  if (size.x !== width || size.y !== height) {
+    world.renderer.setSize(width, height, false);
+    world.camera.aspect = width / height;
+    world.camera.updateProjectionMatrix();
+  }
+}
+
+function animate() {
+  if (!world.renderer || !world.scene || !world.camera) return;
+  requestAnimationFrame(animate);
+  const elapsed = world.clock.getElapsedTime();
+  resizeRenderer();
+
+  world.eventGroup.rotation.y = elapsed * 0.18;
+  world.rings.forEach((ring, index) => {
+    ring.rotation.z = elapsed * ring.userData.speed;
+    const pulse = 1 + Math.sin(elapsed * 1.4 + index) * 0.028;
+    ring.scale.setScalar(pulse);
+  });
+
+  world.agentObjects.forEach((object, agentId) => {
+    const selected = agentId === activeAgent.id;
+    const bob = Math.sin(elapsed * 2.1 + agentId.length) * (selected ? 0.055 : 0.025);
+    object.body.position.y = 0.42 + bob;
+    object.halo.rotation.z = elapsed * (selected ? 0.8 : 0.36);
+  });
+
+  world.camera.position.lerp(world.targetPosition, 0.07);
+  world.cameraLookAt.lerp(world.targetLookAt, 0.08);
+  world.camera.lookAt(world.cameraLookAt);
+  world.renderer.render(world.scene, world.camera);
 }
 
 document.querySelectorAll("[data-view]").forEach((button) => {
@@ -337,4 +957,10 @@ renderAgents();
 selectPerspective(activePerspective);
 syncModule();
 syncAgent();
-updateClock();
+
+try {
+  initScene();
+} catch (error) {
+  console.error("3D viewport failed to start; using fallback render image.", error);
+  updateClock();
+}

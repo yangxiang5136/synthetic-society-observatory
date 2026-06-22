@@ -19,10 +19,18 @@ The current version is a local static prototype:
 index.html
 styles.css
 app.js
-assets/neutral-observatory-viewport.png
+vendor/three.min.js
+assets/cyberpunk-observatory-viewport.png
 ```
 
-Open `index.html` in a browser to view the V0 console.
+Open `index.html` in a browser to view the V0 console. The main viewport is an interactive Three.js stage with:
+
+- overview, observer, and first-person camera modes;
+- a modular 3D city slice with buildings, roads, visible agents, event core, and cause lines;
+- a 00:00-23:59 time scrubber;
+- day, dusk, and night lighting linked to the timeline.
+
+The rendered images in `assets/` remain fallback and style-reference assets. They are not treated as live simulation proof.
 
 ## Module Isolation Policy
 
@@ -76,6 +84,7 @@ This repository should not contain:
 ## Roadmap
 
 - V0: visual console and module/event isolation.
+- V0.2: interactive 3D viewport, camera modes, and timeline-linked lighting.
 - V1: load module manifests from JSON.
 - V2: connect synthetic population slices and event logs.
 - V3: export observer slices to rendered shots.

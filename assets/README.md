@@ -23,4 +23,4 @@ Earlier neutral generated viewport asset kept for fallback and comparison.
 - `street-event-cinematic.webp` - alternate neutral street-level cinematic render.
 - `observer-deck-view.png` - cinematic observer deck / UI view.
 
-These assets support perspective switching: overview, street, and deck. They are reference/render assets, not proof of a live runtime.
+These assets now support fallback display and style reference. The primary viewport is the interactive 3D stage in `index.html` / `app.js`. Render assets are not proof of a live runtime.

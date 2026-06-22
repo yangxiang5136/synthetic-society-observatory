@@ -23,20 +23,23 @@
           <button id="playButton" class="control-button primary" type="button">Play Slice</button>
           <div class="mode-tabs" role="tablist" aria-label="View mode">
             <button class="mode-tab is-active" type="button" data-view="overview">Overview</button>
-            <button class="mode-tab" type="button" data-view="street">Street</button>
-            <button class="mode-tab" type="button" data-view="deck">Deck</button>
+            <button class="mode-tab" type="button" data-view="observer">Observer</button>
+            <button class="mode-tab" type="button" data-view="first">First Person</button>
           </div>
           <label class="scrub-control" for="timeScrubber">
-            <span id="clockLabel">T+09:40</span>
-            <input id="timeScrubber" type="range" min="0" max="2880" value="580" />
+            <span id="clockLabel">19:40</span>
+            <input id="timeScrubber" type="range" min="0" max="1439" step="5" value="1180" />
+            <span id="dayPhaseLabel" class="phase-label">night / neon city</span>
           </label>
         </section>
       </header>
 
       <section class="observatory-stage" aria-label="Visual observatory stage">
         <section class="world-stage" aria-label="Synthetic society viewport">
+          <canvas id="worldCanvas" class="world-canvas" aria-label="Interactive 3D synthetic society model"></canvas>
           <img
             id="stageImage"
+            class="stage-fallback"
             src="assets/cyberpunk-observatory-viewport.png"
             alt="Neutral cyberpunk miniature synthetic society observatory viewport"
           />
@@ -51,7 +54,7 @@
           <div class="stage-chip stage-boundary" aria-label="Run boundary">
             <span>public-safe seed</span>
             <span>no private modules</span>
-            <span>staged observer UI</span>
+            <span>3D viewport model</span>
           </div>
 
           <div class="stage-chip stage-perspective">
@@ -145,6 +148,7 @@
       </footer>
     </main>
 
+    <script src="vendor/three.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
