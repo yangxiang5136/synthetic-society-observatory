@@ -20,22 +20,22 @@ Current integrated assets:
 - `assets/street-event-cinematic.webp` - alternate street-level view.
 - `assets/observer-deck-view.png` - observer-deck cinematic UI view.
 
-## 2. Default Vendor-Frame Viewport Path
+## 2. Default Spatial Video Viewport Path
 
-Use pre-rendered stills, rendered clips, or frame manifests as the default public UI path. The browser should display returned assets and handle selection state, not continuously render the world locally.
+Use pre-rendered stills, rendered clips, spatial orbit videos, or frame manifests as the default public UI path. The browser should display returned assets and handle selection state, not continuously render the world locally.
 
 Current scope:
 
 - fixed, one-screen observatory console;
 - overview, observer, and first-person view switching;
-- timeline and event selection mapped to selected frame assets;
+- timeline and event selection mapped to selected media assets;
 - dawn, day, dusk, and night labels linked to the timeline;
 - local WebGL render loop disabled by default.
 
 Expected vendor-side flow:
 
 1. A scenario or observer slice becomes a render request.
-2. A vendor render lane produces stills, video, or a frame manifest.
+2. A vendor render lane produces stills, spatial video, transition clips, or a frame manifest.
 3. Returned assets are stored under `assets/` or a future CDN bucket.
 4. The UI displays those assets and updates metadata panels.
 
@@ -44,6 +44,7 @@ Boundary:
 - "Vendor-side rendering" means Hugging Face, Blender node, cloud GPU, Replicate-like endpoint, or another external render worker.
 - A local `vendor/` dependency folder is not vendor-side rendering.
 - The UI must not claim a rendered frame is a live runtime or real prediction.
+- See `docs/SPATIAL_VIDEO_RENDER_CONTRACT.md` for the current media contract.
 
 ## 3. Optional Local 3D Preview Path
 

@@ -36,11 +36,23 @@
 
       <section class="observatory-stage" aria-label="Visual observatory stage">
         <section class="world-stage" aria-label="Synthetic society viewport">
-          <canvas id="worldCanvas" class="world-canvas" aria-label="Dormant local 3D preview canvas"></canvas>
+          <video
+            id="stageVideo"
+            class="stage-video"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster="assets/spatial-orbit-v0-poster.jpg"
+            aria-label="Pre-rendered spatial orbit video of the observatory"
+          >
+            <source src="assets/spatial-orbit-v0.mp4" type="video/mp4" />
+          </video>
           <img
             id="stageImage"
             class="stage-fallback"
-            src="assets/cyberpunk-observatory-viewport.png"
+            src="assets/spatial-orbit-v0-poster.jpg"
             alt="Neutral cyberpunk miniature synthetic society observatory viewport"
           />
 
@@ -54,8 +66,8 @@
           <div class="stage-chip stage-boundary" aria-label="Run boundary">
             <span>public-safe seed</span>
             <span>no private modules</span>
-            <span>vendor-rendered frame</span>
-            <span>local render loop off</span>
+            <span>pre-rendered spatial video</span>
+            <span>no local WebGL</span>
           </div>
 
           <div class="stage-chip stage-perspective">
@@ -77,7 +89,7 @@
             <article>
               <span>current view</span>
               <strong id="coreView">overview</strong>
-              <small id="coreRenderMode">vendor frame / GPU idle</small>
+              <small id="coreRenderMode">pre-rendered video / no WebGL</small>
             </article>
             <article class="core-wide">
               <span>thinking / event</span>

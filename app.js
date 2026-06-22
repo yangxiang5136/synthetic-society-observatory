@@ -203,6 +203,29 @@ const perspectives = {
   }
 };
 
+const spatialVideoManifest = {
+  id: "observatory-spatial-video-v0",
+  src: "assets/spatial-orbit-v0.mp4",
+  poster: "assets/spatial-orbit-v0-poster.jpg",
+  durationSeconds: 9,
+  renderMode: "pre-rendered-spatial-video",
+  renderSource: "vendor-or-offline-render-asset",
+  views: {
+    overview: {
+      anchorSeconds: 0.5,
+      label: "overview orbit anchor"
+    },
+    observer: {
+      anchorSeconds: 3.0,
+      label: "observer deck anchor"
+    },
+    first: {
+      anchorSeconds: 6.0,
+      label: "street-level anchor"
+    }
+  }
+};
+
 const dayPhases = [
   {
     id: "night",
@@ -353,6 +376,7 @@ let activeTimelineEvent = timelineEvents[3];
 let activeMinutes = 1180;
 let isPlaying = false;
 let timer = null;
+let pendingVideoAnchor = spatialVideoManifest.views.overview.anchorSeconds;
 
 const moduleRack = document.querySelector("#moduleRack");
 const agentRail = document.querySelector("#agentRail");
@@ -361,6 +385,7 @@ const playButton = document.querySelector("#playButton");
 const clockLabel = document.querySelector("#clockLabel");
 const dayPhaseLabel = document.querySelector("#dayPhaseLabel");
 const timeScrubber = document.querySelector("#timeScrubber");
+const stageVideo = document.querySelector("#stageVideo");
 const stageImage = document.querySelector("#stageImage");
 const worldStage = document.querySelector(".world-stage");
 const perspectiveSummary = document.querySelector("#perspectiveSummary");
@@ -593,6 +618,7 @@ function selectPerspective(viewId) {
   });
   syncModule();
   updateCoreStatus();
+  syncSpatialVideoView(activePerspective);
   syncAgentFocus();
   setCameraTarget();
 }
@@ -665,13 +691,38 @@ function updateCoreStatus() {
   if (coreTime) coreTime.textContent = formatClock(activeMinutes);
   if (corePhase) corePhase.textContent = phase.label;
   if (coreView) coreView.textContent = perspective?.label || activePerspective;
-  if (coreRenderMode) coreRenderMode.textContent = "vendor frame / GPU idle";
+  if (coreRenderMode) coreRenderMode.textContent = "pre-rendered video / no WebGL";
   if (coreThought) coreThought.textContent = activeAgent.question;
   if (coreEvent) {
     coreEvent.textContent = activeTimelineEvent
       ? `${formatClock(activeTimelineEvent.time)} / ${activeTimelineEvent.title}`
       : activeModule.summary;
   }
+}
+
+function applySpatialVideoAnchor(anchorSeconds) {
+  if (!stageVideo || !Number.isFinite(anchorSeconds)) return;
+  pendingVideoAnchor = anchorSeconds;
+  if (stageVideo.readyState < 1) return;
+  const duration = Number.isFinite(stageVideo.duration) && stageVideo.duration > 0
+    ? stageVideo.duration
+    : spatialVideoManifest.durationSeconds;
+  const safeAnchor = Math.max(0, Math.min(duration - 0.1, anchorSeconds));
+  try {
+    stageVideo.currentTime = safeAnchor;
+  } catch (error) {
+    // Some browsers reject early media seeks before metadata is fully usable.
+  }
+  stageVideo.playbackRate = 1;
+  stageVideo.play().catch(() => {
+    worldStage.dataset.videoAutoplay = "blocked";
+  });
+}
+
+function syncSpatialVideoView(viewId) {
+  const view = spatialVideoManifest.views[viewId] || spatialVideoManifest.views.overview;
+  worldStage.dataset.videoAnchor = view.label;
+  applySpatialVideoAnchor(view.anchorSeconds);
 }
 
 function createMaterial(color, options = {}) {
@@ -822,26 +873,30 @@ function initScene() {
 
 function initVendorFrameMode() {
   world.ready = false;
-  if (canvas) {
-    canvas.setAttribute("hidden", "");
-  }
+  if (canvas) canvas.setAttribute("hidden", "");
   worldStage.classList.remove("is-3d-ready");
   worldStage.classList.add("is-vendor-frame");
-  worldStage.dataset.renderMode = "vendor-frame";
-  stageImage.style.opacity = "1";
+  worldStage.dataset.renderMode = spatialVideoManifest.renderMode;
+  initSpatialVideo();
   updateCoreStatus();
   window.__SSO3D_DEBUG__ = {
     get ready() {
       return false;
     },
     get renderMode() {
-      return "vendor-frame";
+      return spatialVideoManifest.renderMode;
     },
     get localRenderLoop() {
       return false;
     },
     get usesLocalWebGL() {
       return false;
+    },
+    get mediaMode() {
+      return "video-decode-only";
+    },
+    get videoSrc() {
+      return spatialVideoManifest.src;
     },
     get activePerspective() {
       return activePerspective;
@@ -853,6 +908,27 @@ function initVendorFrameMode() {
       return activeTimelineEvent?.id;
     }
   };
+}
+
+function initSpatialVideo() {
+  if (!stageVideo) return;
+  stageVideo.muted = true;
+  stageVideo.loop = true;
+  stageVideo.playsInline = true;
+  stageVideo.addEventListener("loadedmetadata", () => {
+    worldStage.classList.add("is-video-ready");
+    applySpatialVideoAnchor(pendingVideoAnchor);
+  }, { once: true });
+  stageVideo.addEventListener("canplay", () => {
+    worldStage.classList.add("is-video-ready");
+  });
+  stageVideo.addEventListener("error", () => {
+    worldStage.classList.remove("is-video-ready");
+    worldStage.dataset.videoError = "true";
+  });
+  stageVideo.play().catch(() => {
+    worldStage.dataset.videoAutoplay = "blocked";
+  });
 }
 
 function addRoads(city) {

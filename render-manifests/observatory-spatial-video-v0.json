@@ -1,0 +1,61 @@
+{
+  "schema": "sso.spatial-video-manifest.v0",
+  "id": "observatory-spatial-video-v0",
+  "title": "Synthetic Society Observatory Spatial Orbit V0",
+  "boundary": {
+    "runtime_mode": "pre_rendered_media",
+    "browser_webgl_required": false,
+    "browser_gpu_role": "video_decode_only",
+    "simulation_claim": "none",
+    "private_modules_bundled": false
+  },
+  "assets": {
+    "mp4": "assets/spatial-orbit-v0.mp4",
+    "poster": "assets/spatial-orbit-v0-poster.jpg",
+    "fallbacks": {
+      "overview": "assets/cyberpunk-observatory-viewport.png",
+      "observer": "assets/observer-deck-view.png",
+      "first": "assets/street-event-wide.png"
+    }
+  },
+  "video": {
+    "duration_seconds": 9,
+    "frame_rate": 24,
+    "resolution": [1280, 720],
+    "loopable": true,
+    "audio": false
+  },
+  "viewpoints": {
+    "overview": {
+      "anchor_seconds": 0.5,
+      "camera_role": "high_dimensional_overview",
+      "description": "God-view social overview of the full observable slice."
+    },
+    "observer": {
+      "anchor_seconds": 3.0,
+      "camera_role": "third_person_observer_deck",
+      "description": "Observer-deck view for causal replay and public video framing."
+    },
+    "first": {
+      "anchor_seconds": 6.0,
+      "camera_role": "embodied_street_level",
+      "description": "Street-level or first-person-adjacent view around the selected agent."
+    }
+  },
+  "future_render_contract": {
+    "preferred_outputs": [
+      "orbit_master.mp4",
+      "overview_to_observer.mp4",
+      "observer_to_first.mp4",
+      "first_to_overview.mp4",
+      "poster.jpg",
+      "camera_path.json"
+    ],
+    "optional_buffers": [
+      "depth_video.exr_sequence",
+      "normal_video.exr_sequence",
+      "motion_vectors.exr_sequence"
+    ],
+    "notes": "The browser should consume media and metadata. It should not reconstruct the world or render the scene for public visitors."
+  }
+}
