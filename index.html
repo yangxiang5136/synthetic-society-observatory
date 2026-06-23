@@ -66,14 +66,54 @@
           <div class="stage-chip stage-boundary" aria-label="Run boundary">
             <span>public-safe seed</span>
             <span>no private modules</span>
-            <span>pre-rendered spatial video</span>
-            <span>no local WebGL</span>
+            <span>remote GPU protocol</span>
+            <span>media fallback</span>
           </div>
 
           <div class="stage-chip stage-perspective">
             <span>perspective</span>
             <strong id="perspectiveSummary">high-dimensional social overview</strong>
           </div>
+
+          <section class="render-control-panel glass-panel" aria-label="Remote GPU 360 view controls">
+            <div class="panel-title inline">
+              <div>
+                <p class="kicker">remote render</p>
+                <h2>360 View Control</h2>
+              </div>
+              <span id="renderModeBadge">media fallback</span>
+            </div>
+
+            <label class="control-field" for="viewTargetSelect">
+              <span>target</span>
+              <select id="viewTargetSelect"></select>
+            </label>
+
+            <label class="control-field" for="yawControl">
+              <span>yaw <strong id="yawValue">0°</strong></span>
+              <input id="yawControl" type="range" min="0" max="360" step="1" value="0" />
+            </label>
+
+            <label class="control-field" for="pitchControl">
+              <span>pitch <strong id="pitchValue">12°</strong></span>
+              <input id="pitchControl" type="range" min="-35" max="45" step="1" value="12" />
+            </label>
+
+            <label class="control-field" for="zoomControl">
+              <span>zoom <strong id="zoomValue">1.00x</strong></span>
+              <input id="zoomControl" type="range" min="0.7" max="1.8" step="0.05" value="1" />
+            </label>
+
+            <div class="render-actions">
+              <button id="autoOrbitButton" class="mini-button is-active" type="button">Auto Orbit</button>
+              <button id="resetViewButton" class="mini-button" type="button">Reset</button>
+              <button id="remoteModeButton" class="mini-button" type="button">Remote GPU</button>
+            </div>
+
+            <p id="renderStatusLine" class="render-status-line">
+              Remote endpoint not connected. Using pre-rendered 360 media fallback.
+            </p>
+          </section>
 
           <section class="core-status glass-panel" aria-label="Current observatory focus">
             <article>

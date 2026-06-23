@@ -1,40 +1,51 @@
 # Spatial Video Render Contract
 
-Synthetic Society Observatory should feel like a living 3D observatory without making every public visitor render a 3D scene.
+Synthetic Society Observatory should feel like a living 3D observatory without making every public visitor render a 3D scene locally.
 
-The production model is:
+The default static-media model is:
 
 1. Build or load the actual 3D scene on a render worker.
 2. Render camera paths, viewpoint transitions, day/night variants, and event variants as media.
 3. Publish video, poster frames, and metadata to static storage or a CDN.
 4. Let the public webpage display media and update UI state only.
 
+The future interactive model is remote GPU rendering:
+
+1. Keep the 3D scene loaded on a remote GPU worker.
+2. Send camera controls from the browser.
+3. Render the requested viewpoint remotely.
+4. Stream the resulting pixels back through WebRTC or an equivalent low-latency transport.
+
+See `docs/REMOTE_GPU_RENDERING.md` for that protocol.
+
 ## Browser Runtime Rule
 
-The public browser runtime should be video-first:
+The public browser runtime should remain video-first:
 
 - play MP4/WebM/HLS assets;
 - seek to viewpoint anchors;
+- send yaw, pitch, zoom, target, time, event, and agent controls when a remote endpoint exists;
 - show HTML overlays for selected agent, time, view, and event;
 - avoid WebGL unless a developer explicitly enables a local preview mode.
 
-This means the visitor's machine performs media decoding, not scene rendering.
+This means the visitor's machine performs media decoding and UI control work, not scene rendering.
 
 ## Viewpoint Model
 
-The observatory does not need infinite free-camera control in the public page. It needs smooth, authored viewpoint movement:
+The observatory needs smooth 360-degree viewpoint movement at two levels:
 
 - `overview` - high-dimensional social overview;
 - `observer` - third-person observer deck / causal replay;
 - `first` - street-level or selected-agent-adjacent view.
+- selected agents - 360-degree orbit around each visible person.
 
-Each viewpoint is an anchor inside a pre-rendered orbit video. Later versions can replace one loop with explicit transition clips:
+In the current static prototype, yaw maps to an anchor inside a pre-rendered orbit video. Later media versions can replace one loop with explicit transition clips:
 
 - `overview_to_observer.mp4`
 - `observer_to_first.mp4`
 - `first_to_overview.mp4`
 
-The interaction stays the same: choose a view, play or seek the corresponding media segment, update metadata panels.
+In the remote GPU version, the interaction stays the same but the renderer answers camera controls in real time.
 
 ## Day And Night
 

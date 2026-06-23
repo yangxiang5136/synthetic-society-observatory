@@ -46,7 +46,31 @@ Boundary:
 - The UI must not claim a rendered frame is a live runtime or real prediction.
 - See `docs/SPATIAL_VIDEO_RENDER_CONTRACT.md` for the current media contract.
 
-## 3. Optional Local 3D Preview Path
+## 3. Remote GPU Interactive Path
+
+Use remote GPU pixel streaming when the page needs smooth 360-degree camera control without shifting scene rendering onto each visitor's laptop.
+
+Current prototype scope:
+
+- target selection for overview, observer deck, first-person, and each visible agent;
+- yaw, pitch, and zoom controls;
+- staged `sso.remote-render-control.v0` packets exposed to the page;
+- pre-rendered orbit media as the no-endpoint fallback.
+
+Expected remote flow:
+
+1. A render gateway creates or attaches a remote GPU session.
+2. The browser sends camera and observatory-state packets.
+3. The renderer updates the loaded 3D scene and camera.
+4. A WebRTC stream returns the rendered pixels to the browser.
+
+Boundary:
+
+- This path still involves real-time rendering, but the render cost belongs to the remote GPU service.
+- The public browser should decode video and send controls, not run the scene render loop.
+- See `docs/REMOTE_GPU_RENDERING.md` and `render-manifests/remote-gpu-session-v0.json`.
+
+## 4. Optional Local 3D Preview Path
 
 Use a local Three.js viewport only as an opt-in preview or development experiment, not as the default public path. This mode runs in the viewer's browser and can use local CPU/GPU resources.
 
@@ -66,7 +90,7 @@ Boundary:
 - Private modules should still enter only through explicit event manifests.
 - This path should stay disabled unless a developer explicitly opts into local preview.
 
-## 4. Hugging Face MCP Path
+## 5. Hugging Face MCP Path
 
 Hugging Face MCP or similar model endpoints can be used as a render lane for concept images when the goal is fast exploration.
 
@@ -80,7 +104,7 @@ Recommended use:
 
 This path is useful because it can produce cinematic scene variety faster than a full 3D scene build.
 
-## 5. Windows Blender Render Node
+## 6. Windows Blender Render Node
 
 The Windows render node should be used when the scene needs to become reproducible, animated, or tied to future `observer_slices -> render_shotlist` output.
 

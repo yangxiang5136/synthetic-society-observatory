@@ -1,5 +1,7 @@
 const LOCAL_3D_ENABLED = false;
 const THREE = window.THREE || null;
+const queryParams = new URLSearchParams(window.location.search);
+const remoteRenderEndpoint = queryParams.get("renderEndpoint") || "";
 
 function vector3(x = 0, y = 0, z = 0) {
   return THREE ? new THREE.Vector3(x, y, z) : null;
@@ -226,6 +228,41 @@ const spatialVideoManifest = {
   }
 };
 
+const remoteRenderConfig = {
+  protocol: "webrtc-pixel-streaming",
+  endpoint: remoteRenderEndpoint,
+  endpointConfigured: Boolean(remoteRenderEndpoint),
+  browserRole: "send-camera-controls-and-decode-video",
+  renderRole: "remote-gpu-renders-scene"
+};
+
+const viewTargets = [
+  {
+    id: "view-overview",
+    type: "viewpoint",
+    label: "Overview / world orbit",
+    perspective: "overview"
+  },
+  {
+    id: "view-observer",
+    type: "viewpoint",
+    label: "Observer deck / causal orbit",
+    perspective: "observer"
+  },
+  {
+    id: "view-first",
+    type: "viewpoint",
+    label: "First person / street orbit",
+    perspective: "first"
+  },
+  ...agents.map((agent) => ({
+    id: agent.id,
+    type: "agent",
+    label: `${agent.name} / 360 focus`,
+    agentId: agent.id
+  }))
+];
+
 const dayPhases = [
   {
     id: "night",
@@ -377,6 +414,10 @@ let activeMinutes = 1180;
 let isPlaying = false;
 let timer = null;
 let pendingVideoAnchor = spatialVideoManifest.views.overview.anchorSeconds;
+let activeViewTargetId = "view-overview";
+let autoOrbitEnabled = true;
+let renderTransportMode = "fallback";
+const viewControlState = new Map();
 
 const moduleRack = document.querySelector("#moduleRack");
 const agentRail = document.querySelector("#agentRail");
@@ -405,6 +446,18 @@ const coreView = document.querySelector("#coreView");
 const coreRenderMode = document.querySelector("#coreRenderMode");
 const coreThought = document.querySelector("#coreThought");
 const coreEvent = document.querySelector("#coreEvent");
+const viewTargetSelect = document.querySelector("#viewTargetSelect");
+const yawControl = document.querySelector("#yawControl");
+const pitchControl = document.querySelector("#pitchControl");
+const zoomControl = document.querySelector("#zoomControl");
+const yawValue = document.querySelector("#yawValue");
+const pitchValue = document.querySelector("#pitchValue");
+const zoomValue = document.querySelector("#zoomValue");
+const renderModeBadge = document.querySelector("#renderModeBadge");
+const renderStatusLine = document.querySelector("#renderStatusLine");
+const autoOrbitButton = document.querySelector("#autoOrbitButton");
+const resetViewButton = document.querySelector("#resetViewButton");
+const remoteModeButton = document.querySelector("#remoteModeButton");
 
 const world = {
   ready: false,
@@ -514,6 +567,166 @@ function renderTimeline() {
   });
 }
 
+function renderViewTargets() {
+  if (!viewTargetSelect) return;
+  viewTargetSelect.innerHTML = "";
+  viewTargets.forEach((target) => {
+    const option = document.createElement("option");
+    option.value = target.id;
+    option.textContent = target.label;
+    viewTargetSelect.appendChild(option);
+  });
+  viewTargetSelect.value = activeViewTargetId;
+}
+
+function getViewTarget(targetId = activeViewTargetId) {
+  return viewTargets.find((target) => target.id === targetId) || viewTargets[0];
+}
+
+function getViewState(targetId = activeViewTargetId) {
+  if (!viewControlState.has(targetId)) {
+    viewControlState.set(targetId, {
+      yaw: 0,
+      pitch: targetId.startsWith("agent-") ? 4 : 12,
+      zoom: targetId.startsWith("agent-") ? 1.18 : 1
+    });
+  }
+  return viewControlState.get(targetId);
+}
+
+function selectViewTarget(targetId) {
+  const target = getViewTarget(targetId);
+  activeViewTargetId = target.id;
+  if (viewTargetSelect && viewTargetSelect.value !== target.id) {
+    viewTargetSelect.value = target.id;
+  }
+  if (target.type === "agent" && target.agentId) {
+    selectAgent(target.agentId);
+  }
+  if (target.type === "viewpoint" && target.perspective) {
+    selectPerspective(target.perspective);
+  }
+  syncViewControls({ seekVideo: true });
+}
+
+function setAutoOrbit(enabled) {
+  autoOrbitEnabled = Boolean(enabled);
+  autoOrbitButton?.classList.toggle("is-active", autoOrbitEnabled);
+  if (!stageVideo) return;
+  if (autoOrbitEnabled) {
+    stageVideo.play().catch(() => {
+      worldStage.dataset.videoAutoplay = "blocked";
+    });
+  } else {
+    stageVideo.pause();
+  }
+}
+
+function setRenderTransportMode(mode) {
+  renderTransportMode = mode === "remote" ? "remote" : "fallback";
+  remoteModeButton?.classList.toggle("is-active", renderTransportMode === "remote");
+  if (remoteModeButton) {
+    remoteModeButton.textContent = renderTransportMode === "remote" ? "Remote staged" : "Remote GPU";
+  }
+  syncViewControls({ seekVideo: renderTransportMode !== "remote" });
+}
+
+function updateControlLabels(state = getViewState()) {
+  if (yawValue) yawValue.textContent = `${Math.round(state.yaw)}°`;
+  if (pitchValue) pitchValue.textContent = `${Math.round(state.pitch)}°`;
+  if (zoomValue) zoomValue.textContent = `${Number(state.zoom).toFixed(2)}x`;
+  if (yawControl) yawControl.value = String(Math.round(state.yaw));
+  if (pitchControl) pitchControl.value = String(Math.round(state.pitch));
+  if (zoomControl) zoomControl.value = String(Number(state.zoom).toFixed(2));
+}
+
+function seekSpatialVideoByYaw(yaw) {
+  if (!stageVideo) return;
+  const duration = Number.isFinite(stageVideo.duration) && stageVideo.duration > 0
+    ? stageVideo.duration
+    : spatialVideoManifest.durationSeconds;
+  const normalizedYaw = ((yaw % 360) + 360) % 360;
+  const targetTime = (normalizedYaw / 360) * duration;
+  try {
+    stageVideo.currentTime = Math.max(0, Math.min(duration - 0.05, targetTime));
+  } catch (error) {
+    pendingVideoAnchor = targetTime;
+  }
+}
+
+function buildRemoteRenderPayload() {
+  const target = getViewTarget();
+  const state = getViewState();
+  return {
+    schema: "sso.remote-render-control.v0",
+    transport: remoteRenderConfig.protocol,
+    endpoint: remoteRenderConfig.endpoint || null,
+    endpointConfigured: remoteRenderConfig.endpointConfigured,
+    browserRole: remoteRenderConfig.browserRole,
+    renderRole: remoteRenderConfig.renderRole,
+    mode: renderTransportMode,
+    target: {
+      id: target.id,
+      type: target.type,
+      perspective: target.perspective || activePerspective,
+      agentId: target.agentId || activeAgent.id
+    },
+    camera: {
+      yaw: Number(state.yaw.toFixed(2)),
+      pitch: Number(state.pitch.toFixed(2)),
+      zoom: Number(state.zoom.toFixed(2))
+    },
+    observatory: {
+      time: formatClock(activeMinutes),
+      eventId: activeTimelineEvent?.id,
+      selectedAgentId: activeAgent.id
+    }
+  };
+}
+
+function syncViewControls(options = {}) {
+  const state = getViewState();
+  updateControlLabels(state);
+  worldStage.style.setProperty("--view-zoom", String(state.zoom));
+  worldStage.style.setProperty("--view-pitch", String(state.pitch));
+  worldStage.style.setProperty("--view-yaw", String(state.yaw));
+  worldStage.dataset.renderTransport = renderTransportMode;
+  worldStage.dataset.viewTarget = activeViewTargetId;
+  if (options.seekVideo && renderTransportMode !== "remote") {
+    seekSpatialVideoByYaw(state.yaw);
+  }
+
+  const payload = buildRemoteRenderPayload();
+  window.__SSO_REMOTE_RENDER_STATE__ = payload;
+  window.dispatchEvent(new CustomEvent("sso:remote-render-control", { detail: payload }));
+  if (renderModeBadge) {
+    renderModeBadge.textContent = renderTransportMode === "remote" ? "remote GPU staged" : "media fallback";
+  }
+  if (renderStatusLine) {
+    if (renderTransportMode === "remote" && remoteRenderConfig.endpointConfigured) {
+      renderStatusLine.textContent = "Remote GPU control packet staged for the configured WebRTC endpoint.";
+    } else if (renderTransportMode === "remote") {
+      renderStatusLine.textContent = "Remote GPU control packet staged. Add ?renderEndpoint=... to connect a stream service.";
+    } else {
+      renderStatusLine.textContent = "Using pre-rendered 360 orbit media. Browser decodes video and sends no local WebGL work.";
+    }
+  }
+  if (coreRenderMode) {
+    coreRenderMode.textContent = renderTransportMode === "remote"
+      ? "remote GPU staged / no local WebGL"
+      : "360 media fallback / no WebGL";
+  }
+}
+
+function updateViewState(patch, options = {}) {
+  const state = getViewState();
+  Object.assign(state, patch);
+  if ("yaw" in patch && options.userInput) {
+    setAutoOrbit(false);
+  }
+  syncViewControls({ seekVideo: true });
+}
+
 function getTimelineEventByTime(minutes) {
   const normalized = ((minutes % 1440) + 1440) % 1440;
   let selected = timelineEvents[timelineEvents.length - 1];
@@ -607,6 +820,10 @@ function syncModule() {
 
 function selectPerspective(viewId) {
   activePerspective = perspectives[viewId] ? viewId : "overview";
+  activeViewTargetId = `view-${activePerspective}`;
+  if (viewTargetSelect) {
+    viewTargetSelect.value = activeViewTargetId;
+  }
   const perspective = perspectives[activePerspective];
   stageImage.src = perspective.image;
   stageImage.alt = perspective.alt;
@@ -619,6 +836,7 @@ function selectPerspective(viewId) {
   syncModule();
   updateCoreStatus();
   syncSpatialVideoView(activePerspective);
+  syncViewControls({ seekVideo: false });
   syncAgentFocus();
   setCameraTarget();
 }
@@ -691,7 +909,11 @@ function updateCoreStatus() {
   if (coreTime) coreTime.textContent = formatClock(activeMinutes);
   if (corePhase) corePhase.textContent = phase.label;
   if (coreView) coreView.textContent = perspective?.label || activePerspective;
-  if (coreRenderMode) coreRenderMode.textContent = "pre-rendered video / no WebGL";
+  if (coreRenderMode) {
+    coreRenderMode.textContent = renderTransportMode === "remote"
+      ? "remote GPU staged / no local WebGL"
+      : "360 media fallback / no WebGL";
+  }
   if (coreThought) coreThought.textContent = activeAgent.question;
   if (coreEvent) {
     coreEvent.textContent = activeTimelineEvent
@@ -915,6 +1137,15 @@ function initSpatialVideo() {
   stageVideo.muted = true;
   stageVideo.loop = true;
   stageVideo.playsInline = true;
+  stageVideo.addEventListener("timeupdate", () => {
+    if (!autoOrbitEnabled || renderTransportMode === "remote") return;
+    const duration = Number.isFinite(stageVideo.duration) && stageVideo.duration > 0
+      ? stageVideo.duration
+      : spatialVideoManifest.durationSeconds;
+    const state = getViewState();
+    state.yaw = ((stageVideo.currentTime / duration) * 360) % 360;
+    syncViewControls({ seekVideo: false });
+  });
   stageVideo.addEventListener("loadedmetadata", () => {
     worldStage.classList.add("is-video-ready");
     applySpatialVideoAnchor(pendingVideoAnchor);
@@ -1312,14 +1543,41 @@ document.querySelectorAll("[data-view]").forEach((button) => {
 
 timeScrubber.addEventListener("input", updateClock);
 playButton.addEventListener("click", togglePlay);
+viewTargetSelect?.addEventListener("change", () => selectViewTarget(viewTargetSelect.value));
+yawControl?.addEventListener("input", () => {
+  updateViewState({ yaw: Number(yawControl.value) }, { userInput: true });
+});
+pitchControl?.addEventListener("input", () => {
+  updateViewState({ pitch: Number(pitchControl.value) }, { userInput: true });
+});
+zoomControl?.addEventListener("input", () => {
+  updateViewState({ zoom: Number(zoomControl.value) }, { userInput: true });
+});
+autoOrbitButton?.addEventListener("click", () => {
+  setAutoOrbit(!autoOrbitEnabled);
+  syncViewControls({ seekVideo: !autoOrbitEnabled });
+});
+resetViewButton?.addEventListener("click", () => {
+  const state = getViewState();
+  state.yaw = 0;
+  state.pitch = activeViewTargetId.startsWith("agent-") ? 4 : 12;
+  state.zoom = activeViewTargetId.startsWith("agent-") ? 1.18 : 1;
+  setAutoOrbit(false);
+  syncViewControls({ seekVideo: true });
+});
+remoteModeButton?.addEventListener("click", () => {
+  setRenderTransportMode(renderTransportMode === "remote" ? "fallback" : "remote");
+});
 
 renderModules();
 renderAgents();
 renderTimeline();
+renderViewTargets();
 selectPerspective(activePerspective);
 setActiveTimelineEvent(activeTimelineEvent);
 syncModule();
 syncAgent();
+syncViewControls({ seekVideo: false });
 
 initVendorFrameMode();
 updateClock();

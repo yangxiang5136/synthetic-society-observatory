@@ -22,11 +22,14 @@ app.js
 assets/cyberpunk-observatory-viewport.png
 assets/spatial-orbit-v0.mp4
 render-manifests/observatory-spatial-video-v0.json
+render-manifests/remote-gpu-session-v0.json
 ```
 
 Open `index.html` in a browser to view the V0 console. The default viewport is a fixed, non-scrolling observatory interface that displays pre-rendered or vendor-rendered spatial video instead of running a local WebGL render loop.
 
 - overview, observer, and first-person view modes;
+- 360-degree view controls for global viewpoints and each visible agent;
+- a staged remote-GPU control protocol for future WebRTC pixel streaming;
 - a 00:00-23:59 time scrubber;
 - dawn, day, dusk, and night states linked to the timeline;
 - event playback nodes that jump the timeline and switch the active module/agent;
@@ -34,7 +37,7 @@ Open `index.html` in a browser to view the V0 console. The default viewport is a
 
 The rendered images and videos in `assets/` are viewport assets and style references. They are not treated as live simulation proof. Future 3D work should produce frames, clips, or frame manifests through a remote/vendor render lane, then let this public UI display the returned assets.
 
-See [docs/SPATIAL_VIDEO_RENDER_CONTRACT.md](docs/SPATIAL_VIDEO_RENDER_CONTRACT.md) and [render-manifests/observatory-spatial-video-v0.json](render-manifests/observatory-spatial-video-v0.json).
+See [docs/SPATIAL_VIDEO_RENDER_CONTRACT.md](docs/SPATIAL_VIDEO_RENDER_CONTRACT.md), [docs/REMOTE_GPU_RENDERING.md](docs/REMOTE_GPU_RENDERING.md), [render-manifests/observatory-spatial-video-v0.json](render-manifests/observatory-spatial-video-v0.json), and [render-manifests/remote-gpu-session-v0.json](render-manifests/remote-gpu-session-v0.json).
 
 ## Module Isolation Policy
 
@@ -92,6 +95,7 @@ This repository should not contain:
 - V0.3: event playback timeline with current-event highlighting and scene diffusion states.
 - V0.4: fixed one-screen console and default vendor-frame display mode with local WebGL disabled.
 - V0.5: pre-rendered spatial video viewport with viewpoint anchors and no local WebGL.
+- V0.6: staged 360-degree remote-GPU control protocol with media fallback.
 - V1: load module manifests from JSON.
 - V2: connect synthetic population slices and event logs.
 - V3: export observer slices to rendered shots.
