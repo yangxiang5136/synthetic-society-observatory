@@ -2297,17 +2297,17 @@ h2 {
 
 @media (max-width: 1180px) {
   .cockpit-shell {
-    grid-template-columns: 230px minmax(0, 1fr) 280px;
+    grid-template-columns: 252px minmax(0, 1fr) 300px;
   }
 
   .cockpit-shell .bottom-console {
-    grid-template-columns: 210px minmax(320px, 1fr) minmax(360px, 0.8fr);
+    grid-template-columns: 196px minmax(320px, 1fr) minmax(340px, 0.78fr);
   }
 }
 
 @media (min-width: 721px) and (max-width: 940px) {
   .cockpit-shell {
-    grid-template-columns: 188px minmax(0, 1fr) 214px;
+    grid-template-columns: clamp(206px, 26vw, 220px) minmax(0, 1fr) clamp(232px, 29vw, 250px);
     grid-template-rows: minmax(0, 1fr) 154px;
     grid-template-areas:
       "left stage right"
@@ -2316,12 +2316,68 @@ h2 {
 
   .cockpit-shell .side-console {
     display: grid;
-    padding: 9px;
+    padding: 8px;
     gap: 8px;
   }
 
+  .cockpit-shell .panel-block {
+    padding: 8px;
+  }
+
+  .cockpit-shell .console-brand h1 {
+    font-size: 23px;
+    line-height: 0.96;
+  }
+
+  .cockpit-shell .panel-title.inline {
+    gap: 8px;
+  }
+
+  .cockpit-shell .event-stream {
+    gap: 6px;
+  }
+
+  .cockpit-shell .event-card {
+    gap: 2px;
+    min-height: 42px;
+    padding: 7px 9px;
+  }
+
+  .cockpit-shell .event-card span {
+    font-size: 10px;
+  }
+
+  .cockpit-shell .module-rack {
+    gap: 6px;
+  }
+
+  .cockpit-shell .module-card {
+    min-height: 52px;
+    gap: 2px;
+    padding: 7px 9px;
+  }
+
+  .cockpit-shell .module-card strong {
+    font-size: 13px;
+  }
+
+  .cockpit-shell .stage-boundary {
+    display: none;
+  }
+
+  .cockpit-shell .stage-location {
+    top: 14px;
+    left: 14px;
+    max-width: calc(100% - 28px);
+  }
+
+  .cockpit-shell .stage-perspective {
+    top: 76px;
+    left: 14px;
+  }
+
   .cockpit-shell .bottom-console {
-    grid-template-columns: 172px minmax(0, 1fr) 280px;
+    grid-template-columns: 160px minmax(0, 1fr) 260px;
     overflow: hidden;
   }
 
@@ -2376,6 +2432,42 @@ h2 {
     right: 12px;
     bottom: 12px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cockpit-shell .right-console .semantic-ribbon {
+    gap: 6px;
+  }
+
+  .cockpit-shell .right-console .semantic-ribbon article {
+    padding: 7px;
+  }
+
+  .cockpit-shell .semantic-ribbon span {
+    margin-bottom: 5px;
+    font-size: 10px;
+  }
+
+  .cockpit-shell .semantic-ribbon strong {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .cockpit-shell .impact-row {
+    grid-template-columns: 70px minmax(0, 1fr) 34px;
+    gap: 7px;
+    padding: 6px;
+  }
+
+  .cockpit-shell .drag-orbit-readout {
+    padding: 7px 9px;
+  }
+
+  .cockpit-shell .drag-orbit-readout strong {
+    font-size: 16px;
+  }
+
+  .cockpit-shell .mini-button {
+    min-height: 28px;
   }
 }
 
