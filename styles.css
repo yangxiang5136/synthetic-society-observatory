@@ -669,6 +669,7 @@
   }
 }
 
+
 * {
   box-sizing: border-box;
 }
@@ -2489,5 +2490,118 @@ h2 {
   .cockpit-shell .bottom-console {
     grid-template-columns: minmax(0, 1fr);
     overflow-y: auto;
+  }
+}
+/* Final user-adjustable cockpit layout override. */
+.cockpit-shell {
+  --cockpit-gap: 10px;
+  --cockpit-padding: 10px;
+  --left-console-width: 260px;
+  --right-console-width: 320px;
+  --bottom-console-height: clamp(218px, 29vh, 250px);
+  position: relative;
+  grid-template-columns: var(--left-console-width) minmax(0, 1fr) var(--right-console-width);
+  grid-template-rows: minmax(0, 1fr) var(--bottom-console-height);
+}
+
+.layout-resizer {
+  position: absolute;
+  z-index: 60;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0.42;
+  transition: opacity 160ms ease, background 160ms ease;
+}
+
+.layout-resizer::before {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(240, 184, 96, 0.58);
+  box-shadow: 0 0 18px rgba(240, 184, 96, 0.18);
+}
+
+.layout-resizer:hover,
+.layout-resizer:focus-visible,
+.layout-resizer.is-active {
+  opacity: 1;
+  outline: none;
+}
+
+.layout-resizer-left,
+.layout-resizer-right {
+  top: var(--cockpit-padding);
+  bottom: calc(var(--cockpit-padding) + var(--bottom-console-height) + var(--cockpit-gap));
+  width: var(--cockpit-gap);
+  min-height: 120px;
+  cursor: col-resize;
+}
+
+.layout-resizer-left {
+  left: calc(var(--cockpit-padding) + var(--left-console-width));
+}
+
+.layout-resizer-right {
+  right: calc(var(--cockpit-padding) + var(--right-console-width));
+}
+
+.layout-resizer-left::before,
+.layout-resizer-right::before {
+  top: 18px;
+  bottom: 18px;
+  left: 4px;
+  width: 2px;
+}
+
+.layout-resizer-bottom {
+  left: var(--cockpit-padding);
+  right: var(--cockpit-padding);
+  bottom: calc(var(--cockpit-padding) + var(--bottom-console-height));
+  height: var(--cockpit-gap);
+  cursor: row-resize;
+}
+
+.layout-resizer-bottom::before {
+  top: 4px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+}
+
+body.is-resizing-layout {
+  cursor: grabbing;
+  user-select: none;
+}
+
+@media (max-width: 1180px) {
+  .cockpit-shell {
+    --left-console-width: 252px;
+    --right-console-width: 300px;
+    --bottom-console-height: clamp(232px, 31vh, 270px);
+    grid-template-columns: var(--left-console-width) minmax(0, 1fr) var(--right-console-width);
+    grid-template-rows: minmax(0, 1fr) var(--bottom-console-height);
+  }
+}
+
+@media (min-width: 721px) and (max-width: 940px) {
+  .cockpit-shell {
+    --left-console-width: clamp(206px, 26vw, 220px);
+    --right-console-width: clamp(232px, 29vw, 250px);
+    --bottom-console-height: clamp(232px, 32vh, 270px);
+    grid-template-columns: var(--left-console-width) minmax(0, 1fr) var(--right-console-width);
+    grid-template-rows: minmax(0, 1fr) var(--bottom-console-height);
+  }
+}
+
+@media (max-width: 720px) {
+  .cockpit-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 154px;
+  }
+
+  .layout-resizer {
+    display: none;
   }
 }

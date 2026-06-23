@@ -428,6 +428,18 @@ const dragOrbitConfig = {
   maxZoom: 1.8,
   zoomStep: 0.05
 };
+const layoutResizeStorageKey = "sso.cockpit.layout.v1";
+const layoutResizeConfig = {
+  minLeft: 188,
+  maxLeft: 380,
+  minRight: 214,
+  maxRight: 420,
+  minBottom: 154,
+  maxBottom: 380,
+  minStageWidth: 340,
+  minStageHeight: 300,
+  keyboardStep: 12
+};
 const viewportDrag = {
   active: false,
   pointerId: null,
@@ -435,6 +447,17 @@ const viewportDrag = {
   startY: 0,
   startYaw: 0,
   startPitch: 0
+};
+const layoutResize = {
+  active: false,
+  pointerId: null,
+  type: null,
+  handle: null,
+  startX: 0,
+  startY: 0,
+  startLeft: 0,
+  startRight: 0,
+  startBottom: 0
 };
 
 const moduleRack = document.querySelector("#moduleRack");
@@ -448,6 +471,11 @@ const timeScrubber = document.querySelector("#timeScrubber");
 const stageVideo = document.querySelector("#stageVideo");
 const stageImage = document.querySelector("#stageImage");
 const worldStage = document.querySelector(".world-stage");
+const cockpitShell = document.querySelector(".cockpit-shell");
+const leftConsole = document.querySelector(".left-console");
+const rightConsole = document.querySelector(".right-console");
+const bottomConsole = document.querySelector(".bottom-console");
+const layoutResizers = document.querySelectorAll("[data-layout-resizer]");
 const perspectiveSummary = document.querySelector("#perspectiveSummary");
 const viewModeLabel = document.querySelector("#viewModeLabel");
 const canvas = document.querySelector("#worldCanvas");
@@ -844,6 +872,225 @@ function zoomViewport(event) {
   const nextZoom = Number((state.zoom + direction * dragOrbitConfig.zoomStep).toFixed(2));
   spatialMediaActive = true;
   updateViewState({ zoom: nextZoom }, { userInput: true });
+  event.preventDefault();
+}
+
+function getLayoutSpacing() {
+  if (!cockpitShell) {
+    return { gap: 10, paddingX: 10, paddingY: 10 };
+  }
+  const styles = getComputedStyle(cockpitShell);
+  return {
+    gap: parseFloat(styles.columnGap) || 10,
+    paddingX: parseFloat(styles.paddingLeft) || 10,
+    paddingY: parseFloat(styles.paddingTop) || 10
+  };
+}
+
+function getCurrentLayoutSizes() {
+  return {
+    left: leftConsole?.getBoundingClientRect().width || 260,
+    right: rightConsole?.getBoundingClientRect().width || 320,
+    bottom: bottomConsole?.getBoundingClientRect().height || 220
+  };
+}
+
+function getLayoutLimit(type) {
+  if (!cockpitShell) {
+    return { min: 0, max: 0 };
+  }
+  const rect = cockpitShell.getBoundingClientRect();
+  const spacing = getLayoutSpacing();
+  const sizes = getCurrentLayoutSizes();
+  const contentWidth = Math.max(0, rect.width - spacing.paddingX * 2 - spacing.gap * 2);
+  const contentHeight = Math.max(0, rect.height - spacing.paddingY * 2 - spacing.gap);
+
+  if (type === "left") {
+    const maxByStage = contentWidth - sizes.right - layoutResizeConfig.minStageWidth;
+    return {
+      min: layoutResizeConfig.minLeft,
+      max: Math.max(layoutResizeConfig.minLeft, Math.min(layoutResizeConfig.maxLeft, maxByStage))
+    };
+  }
+
+  if (type === "right") {
+    const maxByStage = contentWidth - sizes.left - layoutResizeConfig.minStageWidth;
+    return {
+      min: layoutResizeConfig.minRight,
+      max: Math.max(layoutResizeConfig.minRight, Math.min(layoutResizeConfig.maxRight, maxByStage))
+    };
+  }
+
+  const maxByStage = contentHeight - layoutResizeConfig.minStageHeight;
+  return {
+    min: layoutResizeConfig.minBottom,
+    max: Math.max(layoutResizeConfig.minBottom, Math.min(layoutResizeConfig.maxBottom, maxByStage))
+  };
+}
+
+function clampLayoutSize(type, value) {
+  const limit = getLayoutLimit(type);
+  return Math.round(clamp(value, limit.min, limit.max));
+}
+
+function getLayoutProperty(type) {
+  if (type === "left") return "--left-console-width";
+  if (type === "right") return "--right-console-width";
+  return "--bottom-console-height";
+}
+
+function applyLayoutSize(type, value, options = {}) {
+  if (!cockpitShell) return;
+  const nextValue = clampLayoutSize(type, value);
+  cockpitShell.style.setProperty(getLayoutProperty(type), `${nextValue}px`);
+  updateLayoutHandleState();
+  if (options.persist) {
+    saveLayoutPreference();
+  }
+  requestAnimationFrame(resizeRenderer);
+}
+
+function saveLayoutPreference() {
+  if (!cockpitShell) return;
+  try {
+    const sizes = getCurrentLayoutSizes();
+    window.localStorage.setItem(layoutResizeStorageKey, JSON.stringify({
+      left: Math.round(sizes.left),
+      right: Math.round(sizes.right),
+      bottom: Math.round(sizes.bottom)
+    }));
+  } catch (error) {
+    // Local storage can be unavailable in private or embedded contexts.
+  }
+}
+
+function loadLayoutPreference() {
+  if (!cockpitShell) return;
+  try {
+    const rawPreference = window.localStorage.getItem(layoutResizeStorageKey);
+    if (!rawPreference) return;
+    const preference = JSON.parse(rawPreference);
+    ["left", "right", "bottom"].forEach((type) => {
+      if (Number.isFinite(preference[type])) {
+        applyLayoutSize(type, preference[type]);
+      }
+    });
+  } catch (error) {
+    resetLayoutPreference();
+  }
+}
+
+function resetLayoutPreference() {
+  if (!cockpitShell) return;
+  ["--left-console-width", "--right-console-width", "--bottom-console-height"].forEach((property) => {
+    cockpitShell.style.removeProperty(property);
+  });
+  try {
+    window.localStorage.removeItem(layoutResizeStorageKey);
+  } catch (error) {
+    // Ignore storage failures; the visual reset still applies.
+  }
+  updateLayoutHandleState();
+  requestAnimationFrame(resizeRenderer);
+}
+
+function reconcileLayoutBounds() {
+  if (!cockpitShell) return;
+  const sizes = getCurrentLayoutSizes();
+  ["left", "right", "bottom"].forEach((type) => {
+    const nextValue = clampLayoutSize(type, sizes[type]);
+    if (Math.abs(nextValue - sizes[type]) > 1) {
+      cockpitShell.style.setProperty(getLayoutProperty(type), `${nextValue}px`);
+    }
+  });
+  updateLayoutHandleState();
+  requestAnimationFrame(resizeRenderer);
+}
+
+function updateLayoutHandleState() {
+  if (!layoutResizers.length) return;
+  const sizes = getCurrentLayoutSizes();
+  layoutResizers.forEach((handle) => {
+    const type = handle.dataset.layoutResizer;
+    const limit = getLayoutLimit(type);
+    handle.setAttribute("aria-valuemin", String(Math.round(limit.min)));
+    handle.setAttribute("aria-valuemax", String(Math.round(limit.max)));
+    handle.setAttribute("aria-valuenow", String(Math.round(sizes[type])));
+  });
+}
+
+function beginLayoutResize(event) {
+  if (!cockpitShell || event.button !== 0) return;
+  const handle = event.currentTarget;
+  const type = handle.dataset.layoutResizer;
+  const sizes = getCurrentLayoutSizes();
+  layoutResize.active = true;
+  layoutResize.pointerId = event.pointerId;
+  layoutResize.type = type;
+  layoutResize.handle = handle;
+  layoutResize.startX = event.clientX;
+  layoutResize.startY = event.clientY;
+  layoutResize.startLeft = sizes.left;
+  layoutResize.startRight = sizes.right;
+  layoutResize.startBottom = sizes.bottom;
+  handle.classList.add("is-active");
+  document.body.classList.add("is-resizing-layout");
+  handle.setPointerCapture?.(event.pointerId);
+  event.preventDefault();
+  event.stopPropagation();
+}
+
+function dragLayoutResize(event) {
+  if (!layoutResize.active || event.pointerId !== layoutResize.pointerId) return;
+  const dx = event.clientX - layoutResize.startX;
+  const dy = event.clientY - layoutResize.startY;
+  if (layoutResize.type === "left") {
+    applyLayoutSize("left", layoutResize.startLeft + dx);
+  } else if (layoutResize.type === "right") {
+    applyLayoutSize("right", layoutResize.startRight - dx);
+  } else {
+    applyLayoutSize("bottom", layoutResize.startBottom - dy);
+  }
+  event.preventDefault();
+  event.stopPropagation();
+}
+
+function endLayoutResize(event) {
+  if (!layoutResize.active || event.pointerId !== layoutResize.pointerId) return;
+  layoutResize.active = false;
+  layoutResize.pointerId = null;
+  layoutResize.handle?.classList.remove("is-active");
+  if (layoutResize.handle?.hasPointerCapture?.(event.pointerId)) {
+    layoutResize.handle.releasePointerCapture(event.pointerId);
+  }
+  layoutResize.handle = null;
+  layoutResize.type = null;
+  document.body.classList.remove("is-resizing-layout");
+  saveLayoutPreference();
+  event.preventDefault();
+  event.stopPropagation();
+}
+
+function handleLayoutResizeKey(event) {
+  const type = event.currentTarget.dataset.layoutResizer;
+  const sizes = getCurrentLayoutSizes();
+  const step = event.shiftKey ? layoutResizeConfig.keyboardStep * 3 : layoutResizeConfig.keyboardStep;
+  let nextValue = null;
+
+  if (type === "left" && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+    nextValue = sizes.left + (event.key === "ArrowRight" ? step : -step);
+  } else if (type === "right" && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+    nextValue = sizes.right + (event.key === "ArrowLeft" ? step : -step);
+  } else if (type === "bottom" && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
+    nextValue = sizes.bottom + (event.key === "ArrowUp" ? step : -step);
+  } else if (event.key === "Home") {
+    resetLayoutPreference();
+    event.preventDefault();
+    return;
+  }
+
+  if (nextValue === null) return;
+  applyLayoutSize(type, nextValue, { persist: true });
   event.preventDefault();
 }
 
@@ -1683,6 +1930,21 @@ worldStage?.addEventListener("pointerup", endViewportDrag);
 worldStage?.addEventListener("pointercancel", endViewportDrag);
 worldStage?.addEventListener("lostpointercapture", endViewportDrag);
 worldStage?.addEventListener("wheel", zoomViewport, { passive: false });
+layoutResizers.forEach((handle) => {
+  handle.addEventListener("pointerdown", beginLayoutResize);
+  handle.addEventListener("pointermove", dragLayoutResize);
+  handle.addEventListener("pointerup", endLayoutResize);
+  handle.addEventListener("pointercancel", endLayoutResize);
+  handle.addEventListener("lostpointercapture", endLayoutResize);
+  handle.addEventListener("dblclick", (event) => {
+    resetLayoutPreference();
+    event.preventDefault();
+  });
+  handle.addEventListener("keydown", handleLayoutResizeKey);
+});
+window.addEventListener("resize", () => {
+  requestAnimationFrame(reconcileLayoutBounds);
+});
 autoOrbitButton?.addEventListener("click", () => {
   const nextAutoOrbit = !autoOrbitEnabled;
   setAutoOrbit(nextAutoOrbit);
@@ -1700,6 +1962,8 @@ remoteModeButton?.addEventListener("click", () => {
   setRenderTransportMode(renderTransportMode === "remote" ? "fallback" : "remote");
 });
 
+loadLayoutPreference();
+updateLayoutHandleState();
 renderModules();
 renderAgents();
 renderTimeline();
