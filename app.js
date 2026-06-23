@@ -415,13 +415,15 @@ let isPlaying = false;
 let timer = null;
 let pendingVideoAnchor = spatialVideoManifest.views.overview.anchorSeconds;
 let activeViewTargetId = "view-overview";
-let autoOrbitEnabled = true;
+let autoOrbitEnabled = false;
+let spatialMediaActive = false;
 let renderTransportMode = "fallback";
 const viewControlState = new Map();
 
 const moduleRack = document.querySelector("#moduleRack");
 const agentRail = document.querySelector("#agentRail");
 const impactRows = document.querySelector("#impactRows");
+const eventStream = document.querySelector("#eventStream");
 const playButton = document.querySelector("#playButton");
 const clockLabel = document.querySelector("#clockLabel");
 const dayPhaseLabel = document.querySelector("#dayPhaseLabel");
@@ -539,6 +541,9 @@ function renderImpactRows() {
 
 function renderTimeline() {
   timelineTrack.innerHTML = "";
+  if (eventStream) {
+    eventStream.innerHTML = "";
+  }
   timelineEvents.forEach((event) => {
     const button = document.createElement("button");
     button.type = "button";
@@ -550,6 +555,21 @@ function renderTimeline() {
     button.setAttribute("aria-label", `${formatClock(event.time)} ${event.title}`);
     button.addEventListener("click", () => jumpToTimelineEvent(event.id));
     timelineTrack.appendChild(button);
+
+    if (eventStream) {
+      const streamButton = document.createElement("button");
+      streamButton.type = "button";
+      streamButton.className = "event-card";
+      streamButton.dataset.event = event.id;
+      streamButton.style.setProperty("--event-color", event.color);
+      streamButton.innerHTML = `
+        <span>${formatClock(event.time)}</span>
+        <strong>${event.title}</strong>
+        <small>${event.summary}</small>
+      `;
+      streamButton.addEventListener("click", () => jumpToTimelineEvent(event.id));
+      eventStream.appendChild(streamButton);
+    }
   });
 
   timePresetsContainer.innerHTML = "";
@@ -597,6 +617,7 @@ function getViewState(targetId = activeViewTargetId) {
 function selectViewTarget(targetId) {
   const target = getViewTarget(targetId);
   activeViewTargetId = target.id;
+  spatialMediaActive = true;
   if (viewTargetSelect && viewTargetSelect.value !== target.id) {
     viewTargetSelect.value = target.id;
   }
@@ -609,11 +630,16 @@ function selectViewTarget(targetId) {
   syncViewControls({ seekVideo: true });
 }
 
-function setAutoOrbit(enabled) {
-  autoOrbitEnabled = Boolean(enabled);
-  autoOrbitButton?.classList.toggle("is-active", autoOrbitEnabled);
+function shouldShowSpatialMedia() {
+  return spatialMediaActive || autoOrbitEnabled || renderTransportMode === "remote";
+}
+
+function syncStageMotionState() {
+  if (!worldStage) return;
+  const showSpatialMedia = shouldShowSpatialMedia();
+  worldStage.dataset.motion = showSpatialMedia ? "orbit" : "still";
   if (!stageVideo) return;
-  if (autoOrbitEnabled) {
+  if (showSpatialMedia && autoOrbitEnabled && renderTransportMode !== "remote") {
     stageVideo.play().catch(() => {
       worldStage.dataset.videoAutoplay = "blocked";
     });
@@ -622,8 +648,20 @@ function setAutoOrbit(enabled) {
   }
 }
 
+function setAutoOrbit(enabled) {
+  autoOrbitEnabled = Boolean(enabled);
+  if (autoOrbitEnabled) {
+    spatialMediaActive = true;
+  }
+  autoOrbitButton?.classList.toggle("is-active", autoOrbitEnabled);
+  syncStageMotionState();
+}
+
 function setRenderTransportMode(mode) {
   renderTransportMode = mode === "remote" ? "remote" : "fallback";
+  if (renderTransportMode === "remote") {
+    spatialMediaActive = true;
+  }
   remoteModeButton?.classList.toggle("is-active", renderTransportMode === "remote");
   if (remoteModeButton) {
     remoteModeButton.textContent = renderTransportMode === "remote" ? "远端已准备" : "远端渲染";
@@ -693,8 +731,10 @@ function syncViewControls(options = {}) {
   worldStage.dataset.renderTransport = renderTransportMode;
   worldStage.dataset.viewTarget = activeViewTargetId;
   if (options.seekVideo && renderTransportMode !== "remote") {
+    spatialMediaActive = true;
     seekSpatialVideoByYaw(state.yaw);
   }
+  syncStageMotionState();
 
   const payload = buildRemoteRenderPayload();
   window.__SSO_REMOTE_RENDER_STATE__ = payload;
@@ -707,6 +747,8 @@ function syncViewControls(options = {}) {
       renderStatusLine.textContent = "远端渲染控制包已准备，将发送到配置好的视频流端点。";
     } else if (renderTransportMode === "remote") {
       renderStatusLine.textContent = "远端渲染控制包已准备；配置渲染端点后即可连接视频流服务。";
+    } else if (!shouldShowSpatialMedia()) {
+      renderStatusLine.textContent = "默认显示总览沙盘静帧；拖动视角或开启自动环绕后，浏览器只解码预渲染 360 度媒体。";
     } else {
       renderStatusLine.textContent = "当前使用预渲染 360 度环绕媒体，浏览器只解码视频，不执行本地三维渲染。";
     }
@@ -714,7 +756,9 @@ function syncViewControls(options = {}) {
   if (coreRenderMode) {
     coreRenderMode.textContent = renderTransportMode === "remote"
       ? "远端渲染已准备 / 不启用本地三维渲染"
-      : "360 度媒体回退 / 不启用本地三维渲染";
+      : shouldShowSpatialMedia()
+        ? "360 度媒体回退 / 不启用本地三维渲染"
+        : "沙盘静帧 / 可切换 360 度媒体";
   }
 }
 
@@ -777,6 +821,10 @@ function syncTimeline() {
     button.classList.toggle("is-active", button.dataset.event === activeTimelineEvent.id);
   });
 
+  document.querySelectorAll(".event-card").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.event === activeTimelineEvent.id);
+  });
+
   const activePhase = getDayPhase(activeMinutes).id;
   document.querySelectorAll(".time-preset").forEach((button) => {
     const preset = timePresets.find((item) => item.id === button.dataset.preset);
@@ -835,7 +883,7 @@ function selectPerspective(viewId) {
   });
   syncModule();
   updateCoreStatus();
-  syncSpatialVideoView(activePerspective);
+  syncSpatialVideoView(activePerspective, { play: autoOrbitEnabled });
   syncViewControls({ seekVideo: false });
   syncAgentFocus();
   setCameraTarget();
@@ -912,7 +960,9 @@ function updateCoreStatus() {
   if (coreRenderMode) {
     coreRenderMode.textContent = renderTransportMode === "remote"
       ? "远端渲染已准备 / 不启用本地三维渲染"
-      : "360 度媒体回退 / 不启用本地三维渲染";
+      : shouldShowSpatialMedia()
+        ? "360 度媒体回退 / 不启用本地三维渲染"
+        : "沙盘静帧 / 可切换 360 度媒体";
   }
   if (coreThought) coreThought.textContent = activeAgent.question;
   if (coreEvent) {
@@ -922,7 +972,7 @@ function updateCoreStatus() {
   }
 }
 
-function applySpatialVideoAnchor(anchorSeconds) {
+function applySpatialVideoAnchor(anchorSeconds, options = {}) {
   if (!stageVideo || !Number.isFinite(anchorSeconds)) return;
   pendingVideoAnchor = anchorSeconds;
   if (stageVideo.readyState < 1) return;
@@ -936,15 +986,20 @@ function applySpatialVideoAnchor(anchorSeconds) {
     // Some browsers reject early media seeks before metadata is fully usable.
   }
   stageVideo.playbackRate = 1;
-  stageVideo.play().catch(() => {
-    worldStage.dataset.videoAutoplay = "blocked";
-  });
+  if (options.play) {
+    stageVideo.play().catch(() => {
+      worldStage.dataset.videoAutoplay = "blocked";
+    });
+  } else {
+    stageVideo.pause();
+  }
 }
 
-function syncSpatialVideoView(viewId) {
+function syncSpatialVideoView(viewId, options = {}) {
   const view = spatialVideoManifest.views[viewId] || spatialVideoManifest.views.overview;
   worldStage.dataset.videoAnchor = view.label;
-  applySpatialVideoAnchor(view.anchorSeconds);
+  applySpatialVideoAnchor(view.anchorSeconds, options);
+  syncStageMotionState();
 }
 
 function createMaterial(color, options = {}) {
@@ -1148,7 +1203,7 @@ function initSpatialVideo() {
   });
   stageVideo.addEventListener("loadedmetadata", () => {
     worldStage.classList.add("is-video-ready");
-    applySpatialVideoAnchor(pendingVideoAnchor);
+    applySpatialVideoAnchor(pendingVideoAnchor, { play: autoOrbitEnabled });
   }, { once: true });
   stageVideo.addEventListener("canplay", () => {
     worldStage.classList.add("is-video-ready");
@@ -1157,9 +1212,8 @@ function initSpatialVideo() {
     worldStage.classList.remove("is-video-ready");
     worldStage.dataset.videoError = "true";
   });
-  stageVideo.play().catch(() => {
-    worldStage.dataset.videoAutoplay = "blocked";
-  });
+  stageVideo.pause();
+  syncStageMotionState();
 }
 
 function addRoads(city) {
@@ -1554,8 +1608,9 @@ zoomControl?.addEventListener("input", () => {
   updateViewState({ zoom: Number(zoomControl.value) }, { userInput: true });
 });
 autoOrbitButton?.addEventListener("click", () => {
-  setAutoOrbit(!autoOrbitEnabled);
-  syncViewControls({ seekVideo: !autoOrbitEnabled });
+  const nextAutoOrbit = !autoOrbitEnabled;
+  setAutoOrbit(nextAutoOrbit);
+  syncViewControls({ seekVideo: true });
 });
 resetViewButton?.addEventListener("click", () => {
   const state = getViewState();

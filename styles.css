@@ -21,6 +21,654 @@
     sans-serif;
 }
 
+/* Cockpit V1: dense observatory console matching the original dashboard direction. */
+.cockpit-shell {
+  grid-template-columns: 260px minmax(0, 1fr) 320px;
+  grid-template-rows: minmax(0, 1fr) 150px;
+  grid-template-areas:
+    "left stage right"
+    "bottom bottom bottom";
+  gap: 10px;
+  padding: 10px;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(76, 200, 166, 0.12), transparent 42%),
+    radial-gradient(circle at 82% 18%, rgba(240, 184, 96, 0.1), transparent 32%),
+    linear-gradient(180deg, #10141a, #07090d 76%);
+}
+
+.side-console,
+.bottom-console {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.side-console {
+  display: grid;
+  grid-auto-rows: max-content;
+  gap: 10px;
+  padding: 12px;
+}
+
+.left-console {
+  grid-area: left;
+}
+
+.right-console {
+  grid-area: right;
+}
+
+.console-brand h1 {
+  font-size: clamp(22px, 1.7vw, 30px);
+}
+
+.console-brand .tagline {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.panel-block {
+  min-width: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    rgba(8, 11, 16, 0.48);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.compact-copy {
+  margin: -4px 0 9px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.event-stream {
+  display: grid;
+  gap: 7px;
+}
+
+.event-card {
+  --event-color: var(--amber);
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  border: 1px solid color-mix(in srgb, var(--event-color) 30%, transparent);
+  border-radius: 14px;
+  padding: 9px 10px 9px 12px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--event-color) 16%, transparent), transparent 56%),
+    rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.event-card.is-active {
+  border-color: color-mix(in srgb, var(--event-color) 58%, white 10%);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--event-color) 28%, transparent), transparent 62%),
+    rgba(255, 255, 255, 0.065);
+}
+
+.event-card span {
+  color: var(--event-color);
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.event-card strong {
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-card small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.cockpit-shell .world-stage {
+  grid-area: stage;
+  border-radius: 34px;
+  box-shadow:
+    0 36px 90px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(240, 184, 96, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+}
+
+.cockpit-shell .stage-scrim {
+  background:
+    radial-gradient(circle at 50% 38%, transparent 0, transparent 38%, rgba(5, 7, 9, 0.16) 66%),
+    linear-gradient(90deg, rgba(5, 7, 9, 0.52), transparent 18%, transparent 82%, rgba(5, 7, 9, 0.42)),
+    linear-gradient(0deg, rgba(5, 7, 9, 0.58), transparent 36%, rgba(5, 7, 9, 0.12));
+}
+
+.cockpit-shell .stage-location {
+  top: 18px;
+  left: 18px;
+}
+
+.cockpit-shell .stage-boundary {
+  top: 18px;
+  right: 18px;
+}
+
+.cockpit-shell .stage-perspective {
+  top: 78px;
+  left: 18px;
+}
+
+.cockpit-shell .core-status {
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(130px, 0.58fr) minmax(150px, 0.72fr) minmax(0, 1.3fr);
+  gap: 8px;
+  padding: 8px;
+}
+
+.cockpit-shell .core-status article {
+  min-height: 58px;
+}
+
+.right-console .semantic-ribbon {
+  width: auto;
+  margin: 0;
+  position: static;
+  z-index: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 0;
+}
+
+.right-console .semantic-ribbon article {
+  min-height: 0;
+  border-radius: 14px;
+  padding: 9px;
+}
+
+.network-map {
+  position: relative;
+  height: 170px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 50% 48%, rgba(76, 200, 166, 0.16), transparent 58%),
+    rgba(255, 255, 255, 0.035);
+  background-size: 26px 26px, 26px 26px, auto, auto;
+  overflow: hidden;
+}
+
+.network-map .node {
+  position: absolute;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 50%;
+  color: #08100d;
+  font-size: 13px;
+  font-weight: 820;
+  box-shadow: 0 0 24px rgba(76, 200, 166, 0.26);
+}
+
+.node-a {
+  left: 46%;
+  top: 39%;
+  background: var(--teal);
+}
+
+.node-b {
+  left: 22%;
+  top: 20%;
+  background: var(--amber);
+}
+
+.node-c {
+  left: 68%;
+  top: 24%;
+  background: var(--violet);
+}
+
+.node-d {
+  left: 30%;
+  top: 68%;
+  background: var(--mint);
+}
+
+.node-e {
+  left: 72%;
+  top: 66%;
+  background: var(--coral);
+}
+
+.network-map .edge {
+  position: absolute;
+  z-index: 1;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(240, 184, 96, 0.12), rgba(76, 200, 166, 0.62));
+  transform-origin: left center;
+}
+
+.edge-1 {
+  left: 29%;
+  top: 32%;
+  width: 32%;
+  transform: rotate(23deg);
+}
+
+.edge-2 {
+  left: 54%;
+  top: 46%;
+  width: 24%;
+  transform: rotate(-30deg);
+}
+
+.edge-3 {
+  left: 36%;
+  top: 72%;
+  width: 24%;
+  transform: rotate(-42deg);
+}
+
+.edge-4 {
+  left: 54%;
+  top: 56%;
+  width: 27%;
+  transform: rotate(33deg);
+}
+
+.right-console .impact-row {
+  grid-template-columns: 84px minmax(0, 1fr) 38px;
+  padding: 7px;
+}
+
+.right-console .impact-row span,
+.right-console .impact-row strong {
+  font-size: 11px;
+}
+
+.cockpit-shell .render-control-panel {
+  position: static;
+  width: auto;
+  z-index: auto;
+  display: block;
+  border-radius: 18px;
+}
+
+.cockpit-shell .render-control-body {
+  gap: 7px;
+}
+
+.bottom-console {
+  grid-area: bottom;
+  display: grid;
+  grid-template-columns: 238px minmax(380px, 1fr) minmax(420px, 0.82fr);
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 26px;
+}
+
+.bottom-console .run-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  gap: 8px;
+}
+
+.bottom-console .control-button {
+  min-height: 48px;
+  font-size: 14px;
+}
+
+.bottom-console .mode-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 34px;
+}
+
+.agent-rail-panel {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 6px;
+}
+
+.compact-title {
+  margin-bottom: 0;
+}
+
+.bottom-console .agent-grid {
+  grid-auto-columns: minmax(108px, 1fr);
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.bottom-console .agent-button {
+  min-height: 82px;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  gap: 5px;
+  padding: 8px;
+  text-align: center;
+}
+
+.bottom-console .agent-dot {
+  width: 42px;
+  height: 42px;
+}
+
+.bottom-console .agent-button strong {
+  font-size: 12px;
+}
+
+.bottom-console .agent-button span {
+  margin-top: 3px;
+  font-size: 10px;
+}
+
+.bottom-console .timeline-console {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 34px minmax(0, 1fr);
+  gap: 6px;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none;
+}
+
+.timeline-head {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.bottom-console .scrub-control {
+  min-width: 0;
+  width: 100%;
+}
+
+.bottom-console .scrub-control input {
+  width: 100%;
+}
+
+.bottom-console .time-presets {
+  grid-template-columns: repeat(4, minmax(54px, 1fr));
+}
+
+.bottom-console .time-preset {
+  min-height: 34px;
+  padding: 5px 7px;
+}
+
+.bottom-console .time-preset span {
+  display: none;
+}
+
+.bottom-console .timeline-track {
+  height: 34px;
+}
+
+.bottom-console .timeline-detail article {
+  padding: 6px 9px;
+}
+
+.bottom-console .timeline-detail p {
+  -webkit-line-clamp: 1;
+}
+
+@media (max-width: 1180px) {
+  .cockpit-shell {
+    grid-template-columns: 230px minmax(0, 1fr) 280px;
+  }
+
+  .bottom-console {
+    grid-template-columns: 210px minmax(320px, 1fr) minmax(360px, 0.8fr);
+  }
+}
+
+@media (max-width: 940px) {
+  .cockpit-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 154px;
+    grid-template-areas:
+      "stage"
+      "bottom";
+  }
+
+  .side-console {
+    display: none;
+  }
+
+  .bottom-console {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+}
+
+/* Final cockpit overrides: keep this block last so older prototype rules cannot win. */
+.cockpit-shell {
+  grid-template-columns: 260px minmax(0, 1fr) 320px;
+  grid-template-rows: minmax(0, 1fr) 150px;
+  grid-template-areas:
+    "left stage right"
+    "bottom bottom bottom";
+  gap: 10px;
+  padding: 10px;
+}
+
+.cockpit-shell .left-console {
+  grid-area: left;
+  display: grid;
+}
+
+.cockpit-shell .right-console {
+  grid-area: right;
+  display: grid;
+}
+
+.cockpit-shell .world-stage {
+  grid-area: stage;
+}
+
+.cockpit-shell .bottom-console {
+  grid-area: bottom;
+  display: grid;
+}
+
+.cockpit-shell .side-console {
+  grid-auto-rows: max-content;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden auto;
+}
+
+.cockpit-shell .panel-block {
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    rgba(8, 11, 16, 0.48);
+}
+
+.cockpit-shell .render-control-panel {
+  position: static;
+  width: auto;
+  z-index: auto;
+  display: block;
+  border-radius: 18px;
+}
+
+.cockpit-shell .semantic-ribbon,
+.cockpit-shell .lower-orbit,
+.cockpit-shell .platform-footer {
+  display: grid;
+}
+
+.cockpit-shell .right-console .semantic-ribbon {
+  width: auto;
+  margin: 0;
+  position: static;
+  z-index: auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 0;
+}
+
+.cockpit-shell .right-console .semantic-ribbon article {
+  min-height: 0;
+  padding: 9px;
+}
+
+.cockpit-shell .bottom-console {
+  grid-template-columns: 238px minmax(380px, 1fr) minmax(420px, 0.82fr);
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 26px;
+  overflow: hidden;
+}
+
+.cockpit-shell .bottom-console > * {
+  min-height: 0;
+}
+
+.cockpit-shell .bottom-console .run-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 8px;
+}
+
+.cockpit-shell .bottom-console .agent-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(108px, 1fr);
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.cockpit-shell .bottom-console .timeline-console {
+  display: grid;
+  grid-template-rows: auto 34px minmax(0, 1fr);
+  gap: 6px;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cockpit-shell .timeline-head {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.cockpit-shell .core-status {
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(130px, 0.58fr) minmax(150px, 0.72fr) minmax(0, 1.3fr);
+}
+
+@media (max-width: 1180px) {
+  .cockpit-shell {
+    grid-template-columns: 230px minmax(0, 1fr) 280px;
+  }
+
+  .cockpit-shell .bottom-console {
+    grid-template-columns: 210px minmax(320px, 1fr) minmax(360px, 0.8fr);
+  }
+}
+
+@media (max-width: 940px) {
+  .cockpit-shell {
+    grid-template-columns: 188px minmax(0, 1fr) 214px;
+    grid-template-rows: minmax(0, 1fr) 150px;
+    grid-template-areas:
+      "left stage right"
+      "bottom bottom bottom";
+  }
+
+  .cockpit-shell .side-console {
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .cockpit-shell .panel-block {
+    padding: 8px;
+    border-radius: 15px;
+  }
+
+  .cockpit-shell .bottom-console {
+    grid-template-columns: 172px minmax(0, 1fr) 280px;
+    overflow: hidden;
+  }
+
+  .cockpit-shell .console-brand .tagline,
+  .cockpit-shell .network-panel,
+  .cockpit-shell .render-status-line,
+  .cockpit-shell .time-presets {
+    display: none;
+  }
+
+  .cockpit-shell .event-card small,
+  .cockpit-shell .module-card small,
+  .cockpit-shell .agent-read,
+  .cockpit-shell .signal-list {
+    display: none;
+  }
+
+  .cockpit-shell .bottom-console .agent-grid {
+    grid-auto-columns: minmax(86px, 1fr);
+  }
+
+  .cockpit-shell .timeline-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .cockpit-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 154px;
+    grid-template-areas:
+      "stage"
+      "bottom";
+  }
+
+  .cockpit-shell .side-console {
+    display: none;
+  }
+
+  .cockpit-shell .bottom-console {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-y: auto;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -298,12 +946,20 @@ h2 {
   opacity: 1;
 }
 
-.world-stage.is-video-ready .stage-video {
+.world-stage.is-video-ready[data-motion="orbit"] .stage-video {
   opacity: 1;
 }
 
-.world-stage.is-video-ready .stage-fallback {
+.world-stage.is-video-ready[data-motion="orbit"] .stage-fallback {
   opacity: 0;
+}
+
+.world-stage[data-motion="still"] .stage-video {
+  opacity: 0;
+}
+
+.world-stage[data-motion="still"] .stage-fallback {
+  opacity: 1;
 }
 
 .world-stage[data-video-autoplay="blocked"] .stage-video {
@@ -1460,5 +2116,237 @@ h2 {
 
   .timeline-detail strong {
     font-size: 13px;
+  }
+}
+
+/* Final cockpit overrides: keep this block last so older prototype rules cannot win. */
+.cockpit-shell {
+  grid-template-columns: 260px minmax(0, 1fr) 320px;
+  grid-template-rows: minmax(0, 1fr) 150px;
+  grid-template-areas:
+    "left stage right"
+    "bottom bottom bottom";
+  gap: 10px;
+  padding: 10px;
+}
+
+.cockpit-shell .left-console {
+  grid-area: left;
+  display: grid;
+}
+
+.cockpit-shell .right-console {
+  grid-area: right;
+  display: grid;
+}
+
+.cockpit-shell .world-stage {
+  grid-area: stage;
+}
+
+.cockpit-shell .bottom-console {
+  grid-area: bottom;
+  display: grid;
+}
+
+.cockpit-shell .side-console {
+  grid-auto-rows: max-content;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden auto;
+}
+
+.cockpit-shell .panel-block {
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    rgba(8, 11, 16, 0.48);
+}
+
+.cockpit-shell .render-control-panel {
+  position: static;
+  width: auto;
+  z-index: auto;
+  display: block;
+  border-radius: 18px;
+}
+
+.cockpit-shell .semantic-ribbon {
+  display: grid;
+}
+
+.cockpit-shell .right-console .semantic-ribbon {
+  width: auto;
+  margin: 0;
+  position: static;
+  z-index: auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 0;
+}
+
+.cockpit-shell .right-console .semantic-ribbon article {
+  min-height: 0;
+  padding: 9px;
+}
+
+.cockpit-shell .bottom-console {
+  grid-template-columns: 238px minmax(380px, 1fr) minmax(420px, 0.82fr);
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 26px;
+  overflow: hidden;
+}
+
+.cockpit-shell .bottom-console .run-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 8px;
+}
+
+.cockpit-shell .bottom-console .agent-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(108px, 1fr);
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.cockpit-shell .bottom-console .timeline-console {
+  display: grid;
+  grid-template-rows: auto 34px minmax(0, 1fr);
+  gap: 6px;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cockpit-shell .timeline-head {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.cockpit-shell .bottom-console .time-presets {
+  display: grid;
+}
+
+.cockpit-shell .bottom-console .timeline-detail p {
+  display: -webkit-box;
+}
+
+.cockpit-shell .core-status {
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(130px, 0.58fr) minmax(150px, 0.72fr) minmax(0, 1.3fr);
+}
+
+@media (max-width: 1180px) {
+  .cockpit-shell {
+    grid-template-columns: 230px minmax(0, 1fr) 280px;
+  }
+
+  .cockpit-shell .bottom-console {
+    grid-template-columns: 210px minmax(320px, 1fr) minmax(360px, 0.8fr);
+  }
+}
+
+@media (min-width: 721px) and (max-width: 940px) {
+  .cockpit-shell {
+    grid-template-columns: 188px minmax(0, 1fr) 214px;
+    grid-template-rows: minmax(0, 1fr) 154px;
+    grid-template-areas:
+      "left stage right"
+      "bottom bottom bottom";
+  }
+
+  .cockpit-shell .side-console {
+    display: grid;
+    padding: 9px;
+    gap: 8px;
+  }
+
+  .cockpit-shell .bottom-console {
+    grid-template-columns: 172px minmax(0, 1fr) 280px;
+    overflow: hidden;
+  }
+
+  .cockpit-shell .agent-rail-panel {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .cockpit-shell .agent-button {
+    min-height: 58px;
+    grid-template-columns: 30px minmax(0, 1fr);
+    padding: 7px;
+  }
+
+  .cockpit-shell .agent-dot {
+    width: 30px;
+    height: 30px;
+  }
+
+  .cockpit-shell .bottom-console .timeline-console {
+    min-height: 0;
+    grid-template-rows: auto 28px minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .cockpit-shell .timeline-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cockpit-shell .timeline-track {
+    height: 28px;
+  }
+
+  .cockpit-shell .timeline-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cockpit-shell .timeline-detail article {
+    padding: 6px 8px;
+  }
+
+  .cockpit-shell .timeline-detail p {
+    display: none;
+  }
+
+  .cockpit-shell .bottom-console .time-presets {
+    display: none;
+  }
+
+  .cockpit-shell .core-status {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .cockpit-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 154px;
+    grid-template-areas:
+      "stage"
+      "bottom";
+  }
+
+  .cockpit-shell .side-console {
+    display: none;
+  }
+
+  .cockpit-shell .bottom-console {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-y: auto;
   }
 }

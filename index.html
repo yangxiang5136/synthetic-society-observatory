@@ -11,14 +11,228 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="shell" aria-label="合成社会观察台">
-      <header class="top-orbit">
-        <section class="brand-lockup" aria-label="平台标识">
+    <main class="shell cockpit-shell" aria-label="合成社会观察台">
+      <aside class="side-console left-console glass-panel" aria-label="左侧观察面板">
+        <section class="brand-lockup console-brand" aria-label="平台标识">
           <p class="kicker">公共视觉平台</p>
           <h1>合成社会观察台</h1>
           <p class="tagline">投放一个模块化事件，观察合成个体如何重新理解它。</p>
         </section>
 
+        <section class="panel-block" aria-label="事件流">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">事件流</p>
+              <h2>社会摩擦切片</h2>
+            </div>
+            <span id="currentEventLabel">当前事件：夜间扩散检查</span>
+          </div>
+          <div id="eventStream" class="event-stream"></div>
+        </section>
+
+        <section class="panel-block" aria-label="事件模块">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">事件模块</p>
+              <h2 id="activeModuleName">流程助手</h2>
+            </div>
+            <span id="activeModuleType">软件模块</span>
+          </div>
+          <p id="activeModulePayload" class="compact-copy">用途：降低重复文书摩擦</p>
+          <div id="moduleRack" class="module-rack"></div>
+        </section>
+
+        <section class="panel-block agent-focus-card" aria-label="当前人物状态">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">当前人物</p>
+              <h2 id="selectedAgentName">玛拉</h2>
+            </div>
+            <span id="selectedAgentRole">夜班操作员</span>
+          </div>
+          <div class="agent-meta">
+            <span id="selectedAgentNeed">需要可靠地省时间</span>
+          </div>
+          <p id="selectedAgentRead" class="agent-read">
+            只有在确实减少重复工作、且不增加设置负担时，才会把事件判断为有用。
+          </p>
+          <dl class="signal-list">
+            <div>
+              <dt>核心问题</dt>
+              <dd id="agentQuestion">今晚能不能省时间？</dd>
+            </div>
+            <div>
+              <dt>可能行动</dt>
+              <dd id="agentAction">先试用，同时保留退路</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+
+      <section class="world-stage" aria-label="合成社会三维沙盘">
+        <video
+          id="stageVideo"
+          class="stage-video"
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="assets/spatial-orbit-v0-poster.jpg"
+          aria-label="观察台预渲染空间环绕视频"
+        >
+          <source src="assets/spatial-orbit-v0.mp4" type="video/mp4" />
+        </video>
+        <img
+          id="stageImage"
+          class="stage-fallback"
+          src="assets/spatial-orbit-v0-poster.jpg"
+          alt="中性的赛博城市合成社会观察视窗"
+        />
+
+        <div class="stage-scrim" aria-hidden="true"></div>
+
+        <div class="stage-chip stage-location">
+          <span id="viewModeLabel">总览切片</span>
+          <strong id="activeLocation">混合街区 / 公共测试窗口</strong>
+        </div>
+
+        <div class="stage-chip stage-boundary" aria-label="运行边界">
+          <span>公共安全种子</span>
+          <span>不含私有模块</span>
+          <span>远端渲染协议</span>
+          <span>媒体回退</span>
+        </div>
+
+        <div class="stage-chip stage-perspective">
+          <span>当前视角</span>
+          <strong id="perspectiveSummary">高维社会总览</strong>
+        </div>
+
+        <section class="core-status glass-panel" aria-label="当前观察焦点">
+          <article>
+            <span>当前个体</span>
+            <strong id="coreAgentName">玛拉</strong>
+            <small id="coreAgentRole">夜班操作员</small>
+          </article>
+          <article>
+            <span>当前时间</span>
+            <strong id="coreTime">19:40</strong>
+            <small id="corePhase">夜晚 / 霓虹街区</small>
+          </article>
+          <article>
+            <span>当前视角</span>
+            <strong id="coreView">总览</strong>
+            <small id="coreRenderMode">预渲染视频 / 不启用本地三维渲染</small>
+          </article>
+          <article class="core-wide">
+            <span>正在想什么 / 正在发生什么</span>
+            <strong id="coreThought">今晚能不能省时间？</strong>
+            <small id="coreEvent">夜间扩散检查</small>
+          </article>
+        </section>
+      </section>
+
+      <aside class="side-console right-console glass-panel" aria-label="右侧分析面板">
+        <section class="panel-block semantic-panel" aria-label="语义重分类路径">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">语义路径</p>
+              <h2>事件重分类</h2>
+            </div>
+            <span>同一事件，不同本体</span>
+          </div>
+          <div class="semantic-ribbon">
+            <article>
+              <span>1 / 注入事件</span>
+              <strong id="eventSummary">一个工具承诺进入街区</strong>
+            </article>
+            <article>
+              <span>2 / 本体分裂</span>
+              <strong id="ontologySummary">个体会通过自己的需要重新分类它</strong>
+            </article>
+            <article>
+              <span>3 / 社会反应</span>
+              <strong id="responseSummary">采纳、延迟、绕行和拒绝开始分化</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel-block network-panel" aria-label="关系图谱">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">关系图谱</p>
+              <h2>传播路径</h2>
+            </div>
+            <span>事件 / 个体 / 场景</span>
+          </div>
+          <div class="network-map" aria-hidden="true">
+            <span class="node node-a">事</span>
+            <span class="node node-b">工</span>
+            <span class="node node-c">店</span>
+            <span class="node node-d">行</span>
+            <span class="node node-e">管</span>
+            <i class="edge edge-1"></i>
+            <i class="edge edge-2"></i>
+            <i class="edge edge-3"></i>
+            <i class="edge edge-4"></i>
+          </div>
+        </section>
+
+        <section class="panel-block" aria-label="扩散指标">
+          <div class="panel-title inline">
+            <div>
+              <p class="kicker">扩散指标</p>
+              <h2>事件影响</h2>
+            </div>
+            <span>可随时注入或抽离</span>
+          </div>
+          <div id="impactRows" class="impact-rows"></div>
+        </section>
+
+        <details class="render-control-panel panel-block" aria-label="远端渲染与 360 度视角控制" open>
+          <summary class="panel-summary">
+            <div>
+              <p class="kicker">远端渲染</p>
+              <h2>360 度视角</h2>
+            </div>
+            <span id="renderModeBadge">媒体回退</span>
+          </summary>
+
+          <div class="render-control-body">
+            <label class="control-field" for="viewTargetSelect">
+              <span>观察目标</span>
+              <select id="viewTargetSelect"></select>
+            </label>
+
+            <label class="control-field" for="yawControl">
+              <span>水平角 <strong id="yawValue">0°</strong></span>
+              <input id="yawControl" type="range" min="0" max="360" step="1" value="0" />
+            </label>
+
+            <label class="control-field" for="pitchControl">
+              <span>俯仰角 <strong id="pitchValue">12°</strong></span>
+              <input id="pitchControl" type="range" min="-35" max="45" step="1" value="12" />
+            </label>
+
+            <label class="control-field" for="zoomControl">
+              <span>距离 <strong id="zoomValue">1.00 倍</strong></span>
+              <input id="zoomControl" type="range" min="0.7" max="1.8" step="0.05" value="1" />
+            </label>
+
+            <div class="render-actions">
+              <button id="autoOrbitButton" class="mini-button" type="button">自动环绕</button>
+              <button id="resetViewButton" class="mini-button" type="button">重置</button>
+              <button id="remoteModeButton" class="mini-button" type="button">远端渲染</button>
+            </div>
+
+            <p id="renderStatusLine" class="render-status-line">
+              未连接远端渲染端点，当前使用预渲染 360 度媒体回退。
+            </p>
+          </div>
+        </details>
+      </aside>
+
+      <section class="bottom-console glass-panel" aria-label="底部控制台">
         <section class="run-controls" aria-label="运行控制">
           <button id="playButton" class="control-button primary" type="button">播放时间线</button>
           <div class="mode-tabs" role="tablist" aria-label="视角模式">
@@ -26,202 +240,27 @@
             <button class="mode-tab" type="button" data-view="observer">旁观</button>
             <button class="mode-tab" type="button" data-view="first">第一人称</button>
           </div>
-          <label class="scrub-control" for="timeScrubber">
-            <span id="clockLabel">19:40</span>
-            <input id="timeScrubber" type="range" min="0" max="1439" step="5" value="1180" />
-            <span id="dayPhaseLabel" class="phase-label">夜晚 / 霓虹街区</span>
-          </label>
-        </section>
-      </header>
-
-      <section class="observatory-stage" aria-label="视觉观察台">
-        <section class="world-stage" aria-label="合成社会视窗">
-          <video
-            id="stageVideo"
-            class="stage-video"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="metadata"
-            poster="assets/spatial-orbit-v0-poster.jpg"
-            aria-label="观察台预渲染空间环绕视频"
-          >
-            <source src="assets/spatial-orbit-v0.mp4" type="video/mp4" />
-          </video>
-          <img
-            id="stageImage"
-            class="stage-fallback"
-            src="assets/spatial-orbit-v0-poster.jpg"
-            alt="中性的赛博城市合成社会观察视窗"
-          />
-
-          <div class="stage-scrim" aria-hidden="true"></div>
-
-          <div class="stage-chip stage-location">
-            <span id="viewModeLabel">总览切片</span>
-            <strong id="activeLocation">混合街区 / 公共测试窗口</strong>
-          </div>
-
-          <div class="stage-chip stage-boundary" aria-label="运行边界">
-            <span>公共安全种子</span>
-            <span>不含私有模块</span>
-            <span>远端渲染协议</span>
-            <span>媒体回退</span>
-          </div>
-
-          <div class="stage-chip stage-perspective">
-            <span>当前视角</span>
-            <strong id="perspectiveSummary">高维社会总览</strong>
-          </div>
-
-          <details class="render-control-panel glass-panel" aria-label="远端渲染与 360 度视角控制" open>
-            <summary class="panel-summary">
-              <div>
-                <p class="kicker">远端渲染</p>
-                <h2>360 度视角</h2>
-              </div>
-              <span id="renderModeBadge">媒体回退</span>
-            </summary>
-
-            <div class="render-control-body">
-              <label class="control-field" for="viewTargetSelect">
-                <span>观察目标</span>
-                <select id="viewTargetSelect"></select>
-              </label>
-
-              <label class="control-field" for="yawControl">
-                <span>水平角 <strong id="yawValue">0°</strong></span>
-                <input id="yawControl" type="range" min="0" max="360" step="1" value="0" />
-              </label>
-
-              <label class="control-field" for="pitchControl">
-                <span>俯仰角 <strong id="pitchValue">12°</strong></span>
-                <input id="pitchControl" type="range" min="-35" max="45" step="1" value="12" />
-              </label>
-
-              <label class="control-field" for="zoomControl">
-                <span>距离 <strong id="zoomValue">1.00 倍</strong></span>
-                <input id="zoomControl" type="range" min="0.7" max="1.8" step="0.05" value="1" />
-              </label>
-
-              <div class="render-actions">
-                <button id="autoOrbitButton" class="mini-button is-active" type="button">自动环绕</button>
-                <button id="resetViewButton" class="mini-button" type="button">重置</button>
-                <button id="remoteModeButton" class="mini-button" type="button">远端渲染</button>
-              </div>
-
-              <p id="renderStatusLine" class="render-status-line">
-                未连接远端渲染端点，当前使用预渲染 360 度媒体回退。
-              </p>
-            </div>
-          </details>
-
-          <section class="core-status glass-panel" aria-label="当前观察焦点">
-            <article>
-              <span>当前个体</span>
-              <strong id="coreAgentName">玛拉</strong>
-              <small id="coreAgentRole">夜班操作员</small>
-            </article>
-            <article>
-              <span>当前时间</span>
-              <strong id="coreTime">19:40</strong>
-              <small id="corePhase">夜晚 / 霓虹街区</small>
-            </article>
-            <article>
-              <span>当前视角</span>
-              <strong id="coreView">总览</strong>
-              <small id="coreRenderMode">预渲染视频 / 不启用本地三维渲染</small>
-            </article>
-            <article class="core-wide">
-              <span>正在想什么 / 正在发生什么</span>
-              <strong id="coreThought">今晚能不能省时间？</strong>
-              <small id="coreEvent">夜间扩散检查</small>
-            </article>
-          </section>
-
-          <section class="foldout-dock" aria-label="折叠信息舱">
-            <details class="foldout-card glass-panel" open>
-              <summary>
-                <span>事件模块</span>
-                <strong id="activeModuleName">流程助手</strong>
-              </summary>
-              <div class="foldout-body">
-                <p class="module-summary">
-                  <span id="activeModuleType">软件模块</span>
-                  <small id="activeModulePayload">用途：降低重复文书摩擦</small>
-                </p>
-                <div id="moduleRack" class="module-rack"></div>
-              </div>
-            </details>
-
-            <details class="foldout-card glass-panel">
-              <summary>
-                <span>人物状态</span>
-                <strong id="selectedAgentName">玛拉</strong>
-              </summary>
-              <div class="foldout-body">
-                <div class="agent-meta">
-                  <span id="selectedAgentRole">夜班操作员</span>
-                  <span id="selectedAgentNeed">需要可靠地省时间</span>
-                </div>
-                <p id="selectedAgentRead" class="agent-read">
-                  只有在确实减少重复工作、且不增加设置负担时，才会把事件判断为有用。
-                </p>
-                <dl class="signal-list">
-                  <div>
-                    <dt>核心问题</dt>
-                    <dd id="agentQuestion">今晚能不能省时间？</dd>
-                  </div>
-                  <div>
-                    <dt>可能行动</dt>
-                    <dd id="agentAction">先试用，同时保留退路</dd>
-                  </div>
-                </dl>
-              </div>
-            </details>
-
-            <details class="foldout-card glass-panel">
-              <summary>
-                <span>语义路径</span>
-                <strong>事件重分类</strong>
-              </summary>
-              <div class="foldout-body semantic-ribbon" aria-label="语义重分类路径">
-                <article>
-                  <span>1 / 注入事件</span>
-                  <strong id="eventSummary">一个工具承诺进入街区</strong>
-                </article>
-                <article>
-                  <span>2 / 本体分裂</span>
-                  <strong id="ontologySummary">个体会通过自己的需要重新分类它</strong>
-                </article>
-                <article>
-                  <span>3 / 社会反应</span>
-                  <strong id="responseSummary">采纳、延迟、绕行和拒绝开始分化</strong>
-                </article>
-              </div>
-            </details>
-
-            <details class="foldout-card glass-panel">
-              <summary>
-                <span>扩散与人群</span>
-                <strong>8 个可见个体</strong>
-              </summary>
-              <div class="foldout-body population-foldout">
-                <div id="impactRows" class="impact-rows" aria-label="事件扩散指标"></div>
-                <div id="agentRail" class="agent-grid" aria-label="局部人群切片"></div>
-              </div>
-            </details>
-          </section>
         </section>
 
-        <section class="timeline-console glass-panel" aria-label="时间线事件控制">
-          <div class="panel-title inline">
+        <section class="agent-rail-panel" aria-label="局部人群切片">
+          <div class="panel-title inline compact-title">
             <div>
-              <p class="kicker">时间线</p>
-              <h2>事件回放</h2>
+              <p class="kicker">可见个体</p>
+              <h2>局部人群切片</h2>
             </div>
-            <span id="currentEventLabel">当前事件：初始模块暴露</span>
+            <span>8 个中性个体</span>
+          </div>
+          <div id="agentRail" class="agent-grid"></div>
+        </section>
+
+        <section class="timeline-console" aria-label="时间线事件控制">
+          <div class="timeline-head">
+            <label class="scrub-control" for="timeScrubber">
+              <span id="clockLabel">19:40</span>
+              <input id="timeScrubber" type="range" min="0" max="1439" step="5" value="1180" />
+              <span id="dayPhaseLabel" class="phase-label">夜晚 / 霓虹街区</span>
+            </label>
+            <div id="timePresets" class="time-presets" aria-label="时间预设"></div>
           </div>
 
           <div id="timelineTrack" class="timeline-track" aria-label="事件节点"></div>
@@ -229,10 +268,9 @@
           <div class="timeline-detail">
             <article>
               <span id="activeEventTime">19:40</span>
-              <strong id="activeEventTitle">初始模块暴露</strong>
-              <p id="activeEventSummary">模块开始被局部人群看见。</p>
+              <strong id="activeEventTitle">夜间扩散检查</strong>
+              <p id="activeEventSummary">同一事件在时间压力下被测试，退路和同伴信任变得更重要。</p>
             </article>
-            <div id="timePresets" class="time-presets" aria-label="时间预设"></div>
           </div>
         </section>
       </section>
