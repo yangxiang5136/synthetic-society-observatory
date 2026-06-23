@@ -419,6 +419,23 @@ let autoOrbitEnabled = false;
 let spatialMediaActive = false;
 let renderTransportMode = "fallback";
 const viewControlState = new Map();
+const dragOrbitConfig = {
+  yawDegreesPerPixel: 0.36,
+  pitchDegreesPerPixel: 0.16,
+  minPitch: -18,
+  maxPitch: 28,
+  minZoom: 0.7,
+  maxZoom: 1.8,
+  zoomStep: 0.05
+};
+const viewportDrag = {
+  active: false,
+  pointerId: null,
+  startX: 0,
+  startY: 0,
+  startYaw: 0,
+  startPitch: 0
+};
 
 const moduleRack = document.querySelector("#moduleRack");
 const agentRail = document.querySelector("#agentRail");
@@ -449,8 +466,6 @@ const coreRenderMode = document.querySelector("#coreRenderMode");
 const coreThought = document.querySelector("#coreThought");
 const coreEvent = document.querySelector("#coreEvent");
 const viewTargetSelect = document.querySelector("#viewTargetSelect");
-const yawControl = document.querySelector("#yawControl");
-const pitchControl = document.querySelector("#pitchControl");
 const zoomControl = document.querySelector("#zoomControl");
 const yawValue = document.querySelector("#yawValue");
 const pitchValue = document.querySelector("#pitchValue");
@@ -614,6 +629,14 @@ function getViewState(targetId = activeViewTargetId) {
   return viewControlState.get(targetId);
 }
 
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function normalizeYaw(value) {
+  return ((value % 360) + 360) % 360;
+}
+
 function selectViewTarget(targetId) {
   const target = getViewTarget(targetId);
   activeViewTargetId = target.id;
@@ -670,11 +693,9 @@ function setRenderTransportMode(mode) {
 }
 
 function updateControlLabels(state = getViewState()) {
-  if (yawValue) yawValue.textContent = `${Math.round(state.yaw)}°`;
+  if (yawValue) yawValue.textContent = `${Math.round(normalizeYaw(state.yaw))}°`;
   if (pitchValue) pitchValue.textContent = `${Math.round(state.pitch)}°`;
   if (zoomValue) zoomValue.textContent = `${Number(state.zoom).toFixed(2)} 倍`;
-  if (yawControl) yawControl.value = String(Math.round(state.yaw));
-  if (pitchControl) pitchControl.value = String(Math.round(state.pitch));
   if (zoomControl) zoomControl.value = String(Number(state.zoom).toFixed(2));
 }
 
@@ -764,11 +785,66 @@ function syncViewControls(options = {}) {
 
 function updateViewState(patch, options = {}) {
   const state = getViewState();
-  Object.assign(state, patch);
-  if ("yaw" in patch && options.userInput) {
+  if ("yaw" in patch) {
+    state.yaw = normalizeYaw(patch.yaw);
+  }
+  if ("pitch" in patch) {
+    state.pitch = clamp(patch.pitch, dragOrbitConfig.minPitch, dragOrbitConfig.maxPitch);
+  }
+  if ("zoom" in patch) {
+    state.zoom = clamp(patch.zoom, dragOrbitConfig.minZoom, dragOrbitConfig.maxZoom);
+  }
+  if (("yaw" in patch || "pitch" in patch) && options.userInput) {
     setAutoOrbit(false);
   }
   syncViewControls({ seekVideo: true });
+}
+
+function beginViewportDrag(event) {
+  if (!worldStage || event.button !== 0) return;
+  const state = getViewState();
+  viewportDrag.active = true;
+  viewportDrag.pointerId = event.pointerId;
+  viewportDrag.startX = event.clientX;
+  viewportDrag.startY = event.clientY;
+  viewportDrag.startYaw = state.yaw;
+  viewportDrag.startPitch = state.pitch;
+  spatialMediaActive = true;
+  setAutoOrbit(false);
+  worldStage.classList.add("is-dragging");
+  worldStage.setPointerCapture?.(event.pointerId);
+  event.preventDefault();
+}
+
+function dragViewport(event) {
+  if (!viewportDrag.active || event.pointerId !== viewportDrag.pointerId) return;
+  const dx = event.clientX - viewportDrag.startX;
+  const dy = event.clientY - viewportDrag.startY;
+  updateViewState({
+    yaw: viewportDrag.startYaw + dx * dragOrbitConfig.yawDegreesPerPixel,
+    pitch: viewportDrag.startPitch - dy * dragOrbitConfig.pitchDegreesPerPixel
+  }, { userInput: true });
+  event.preventDefault();
+}
+
+function endViewportDrag(event) {
+  if (!viewportDrag.active || event.pointerId !== viewportDrag.pointerId) return;
+  viewportDrag.active = false;
+  viewportDrag.pointerId = null;
+  worldStage?.classList.remove("is-dragging");
+  if (worldStage?.hasPointerCapture?.(event.pointerId)) {
+    worldStage.releasePointerCapture(event.pointerId);
+  }
+}
+
+function zoomViewport(event) {
+  if (!worldStage) return;
+  const state = getViewState();
+  const direction = event.deltaY > 0 ? -1 : 1;
+  const nextZoom = Number((state.zoom + direction * dragOrbitConfig.zoomStep).toFixed(2));
+  spatialMediaActive = true;
+  updateViewState({ zoom: nextZoom }, { userInput: true });
+  event.preventDefault();
 }
 
 function getTimelineEventByTime(minutes) {
@@ -1598,15 +1674,15 @@ document.querySelectorAll("[data-view]").forEach((button) => {
 timeScrubber.addEventListener("input", updateClock);
 playButton.addEventListener("click", togglePlay);
 viewTargetSelect?.addEventListener("change", () => selectViewTarget(viewTargetSelect.value));
-yawControl?.addEventListener("input", () => {
-  updateViewState({ yaw: Number(yawControl.value) }, { userInput: true });
-});
-pitchControl?.addEventListener("input", () => {
-  updateViewState({ pitch: Number(pitchControl.value) }, { userInput: true });
-});
 zoomControl?.addEventListener("input", () => {
   updateViewState({ zoom: Number(zoomControl.value) }, { userInput: true });
 });
+worldStage?.addEventListener("pointerdown", beginViewportDrag);
+worldStage?.addEventListener("pointermove", dragViewport);
+worldStage?.addEventListener("pointerup", endViewportDrag);
+worldStage?.addEventListener("pointercancel", endViewportDrag);
+worldStage?.addEventListener("lostpointercapture", endViewportDrag);
+worldStage?.addEventListener("wheel", zoomViewport, { passive: false });
 autoOrbitButton?.addEventListener("click", () => {
   const nextAutoOrbit = !autoOrbitEnabled;
   setAutoOrbit(nextAutoOrbit);

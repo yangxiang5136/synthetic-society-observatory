@@ -886,7 +886,19 @@ h2 {
   box-shadow:
     0 30px 78px rgba(0, 0, 0, 0.46),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  cursor: grab;
   isolation: isolate;
+  touch-action: none;
+  user-select: none;
+}
+
+.world-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.world-stage .stage-chip,
+.world-stage .core-status {
+  pointer-events: none;
 }
 
 .stage-video,
@@ -1207,6 +1219,41 @@ h2 {
 
 .control-field input {
   accent-color: var(--amber);
+}
+
+.drag-orbit-readout {
+  display: grid;
+  gap: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 9px 10px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.drag-orbit-readout span,
+.drag-orbit-readout small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.drag-orbit-readout strong {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.drag-orbit-readout b,
+.drag-orbit-readout i {
+  font: inherit;
+}
+
+.drag-orbit-readout i {
+  color: var(--dim);
+  font-style: normal;
 }
 
 .render-actions {

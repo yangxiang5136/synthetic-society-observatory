@@ -204,15 +204,15 @@
               <select id="viewTargetSelect"></select>
             </label>
 
-            <label class="control-field" for="yawControl">
-              <span>水平角 <strong id="yawValue">0°</strong></span>
-              <input id="yawControl" type="range" min="0" max="360" step="1" value="0" />
-            </label>
-
-            <label class="control-field" for="pitchControl">
-              <span>俯仰角 <strong id="pitchValue">12°</strong></span>
-              <input id="pitchControl" type="range" min="-35" max="45" step="1" value="12" />
-            </label>
+            <div class="drag-orbit-readout" aria-live="polite">
+              <span>拖动主画面</span>
+              <strong>
+                <b id="yawValue">0°</b>
+                <i>/</i>
+                <b id="pitchValue">12°</b>
+              </strong>
+              <small>横向环绕，纵向有限俯仰</small>
+            </div>
 
             <label class="control-field" for="zoomControl">
               <span>距离 <strong id="zoomValue">1.00 倍</strong></span>
