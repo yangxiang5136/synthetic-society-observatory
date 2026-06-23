@@ -1,41 +1,41 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Synthetic Society Observatory</title>
+    <title>合成社会观察台</title>
     <meta
       name="description"
-      content="A public visual platform for injecting modular software or hardware events into a synthetic society sandbox."
+      content="一个用于观察模块化事件如何进入合成社会并被不同个体重新理解的公共视觉平台。"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="shell" aria-label="Synthetic Society Observatory">
+    <main class="shell" aria-label="合成社会观察台">
       <header class="top-orbit">
-        <section class="brand-lockup" aria-label="Platform identity">
-          <p class="kicker">Public Visual Platform</p>
-          <h1>Synthetic Society Observatory</h1>
-          <p class="tagline">Inject a modular event. Watch a synthetic population reinterpret it.</p>
+        <section class="brand-lockup" aria-label="平台标识">
+          <p class="kicker">公共视觉平台</p>
+          <h1>合成社会观察台</h1>
+          <p class="tagline">投放一个模块化事件，观察合成个体如何重新理解它。</p>
         </section>
 
-        <section class="run-controls" aria-label="Run controls">
-          <button id="playButton" class="control-button primary" type="button">Play Timeline</button>
-          <div class="mode-tabs" role="tablist" aria-label="View mode">
-            <button class="mode-tab is-active" type="button" data-view="overview">Overview</button>
-            <button class="mode-tab" type="button" data-view="observer">Observer</button>
-            <button class="mode-tab" type="button" data-view="first">First Person</button>
+        <section class="run-controls" aria-label="运行控制">
+          <button id="playButton" class="control-button primary" type="button">播放时间线</button>
+          <div class="mode-tabs" role="tablist" aria-label="视角模式">
+            <button class="mode-tab is-active" type="button" data-view="overview">总览</button>
+            <button class="mode-tab" type="button" data-view="observer">旁观</button>
+            <button class="mode-tab" type="button" data-view="first">第一人称</button>
           </div>
           <label class="scrub-control" for="timeScrubber">
             <span id="clockLabel">19:40</span>
             <input id="timeScrubber" type="range" min="0" max="1439" step="5" value="1180" />
-            <span id="dayPhaseLabel" class="phase-label">night / neon city</span>
+            <span id="dayPhaseLabel" class="phase-label">夜晚 / 霓虹街区</span>
           </label>
         </section>
       </header>
 
-      <section class="observatory-stage" aria-label="Visual observatory stage">
-        <section class="world-stage" aria-label="Synthetic society viewport">
+      <section class="observatory-stage" aria-label="视觉观察台">
+        <section class="world-stage" aria-label="合成社会视窗">
           <video
             id="stageVideo"
             class="stage-video"
@@ -45,7 +45,7 @@
             playsinline
             preload="metadata"
             poster="assets/spatial-orbit-v0-poster.jpg"
-            aria-label="Pre-rendered spatial orbit video of the observatory"
+            aria-label="观察台预渲染空间环绕视频"
           >
             <source src="assets/spatial-orbit-v0.mp4" type="video/mp4" />
           </video>
@@ -53,196 +53,189 @@
             id="stageImage"
             class="stage-fallback"
             src="assets/spatial-orbit-v0-poster.jpg"
-            alt="Neutral cyberpunk miniature synthetic society observatory viewport"
+            alt="中性的赛博城市合成社会观察视窗"
           />
 
           <div class="stage-scrim" aria-hidden="true"></div>
 
           <div class="stage-chip stage-location">
-            <span id="viewModeLabel">overview slice</span>
-            <strong id="activeLocation">mixed-use district / public test window</strong>
+            <span id="viewModeLabel">总览切片</span>
+            <strong id="activeLocation">混合街区 / 公共测试窗口</strong>
           </div>
 
-          <div class="stage-chip stage-boundary" aria-label="Run boundary">
-            <span>public-safe seed</span>
-            <span>no private modules</span>
-            <span>remote GPU protocol</span>
-            <span>media fallback</span>
+          <div class="stage-chip stage-boundary" aria-label="运行边界">
+            <span>公共安全种子</span>
+            <span>不含私有模块</span>
+            <span>远端渲染协议</span>
+            <span>媒体回退</span>
           </div>
 
           <div class="stage-chip stage-perspective">
-            <span>perspective</span>
-            <strong id="perspectiveSummary">high-dimensional social overview</strong>
+            <span>当前视角</span>
+            <strong id="perspectiveSummary">高维社会总览</strong>
           </div>
 
-          <section class="render-control-panel glass-panel" aria-label="Remote GPU 360 view controls">
-            <div class="panel-title inline">
+          <details class="render-control-panel glass-panel" aria-label="远端渲染与 360 度视角控制" open>
+            <summary class="panel-summary">
               <div>
-                <p class="kicker">remote render</p>
-                <h2>360 View Control</h2>
+                <p class="kicker">远端渲染</p>
+                <h2>360 度视角</h2>
               </div>
-              <span id="renderModeBadge">media fallback</span>
+              <span id="renderModeBadge">媒体回退</span>
+            </summary>
+
+            <div class="render-control-body">
+              <label class="control-field" for="viewTargetSelect">
+                <span>观察目标</span>
+                <select id="viewTargetSelect"></select>
+              </label>
+
+              <label class="control-field" for="yawControl">
+                <span>水平角 <strong id="yawValue">0°</strong></span>
+                <input id="yawControl" type="range" min="0" max="360" step="1" value="0" />
+              </label>
+
+              <label class="control-field" for="pitchControl">
+                <span>俯仰角 <strong id="pitchValue">12°</strong></span>
+                <input id="pitchControl" type="range" min="-35" max="45" step="1" value="12" />
+              </label>
+
+              <label class="control-field" for="zoomControl">
+                <span>距离 <strong id="zoomValue">1.00 倍</strong></span>
+                <input id="zoomControl" type="range" min="0.7" max="1.8" step="0.05" value="1" />
+              </label>
+
+              <div class="render-actions">
+                <button id="autoOrbitButton" class="mini-button is-active" type="button">自动环绕</button>
+                <button id="resetViewButton" class="mini-button" type="button">重置</button>
+                <button id="remoteModeButton" class="mini-button" type="button">远端渲染</button>
+              </div>
+
+              <p id="renderStatusLine" class="render-status-line">
+                未连接远端渲染端点，当前使用预渲染 360 度媒体回退。
+              </p>
             </div>
+          </details>
 
-            <label class="control-field" for="viewTargetSelect">
-              <span>target</span>
-              <select id="viewTargetSelect"></select>
-            </label>
-
-            <label class="control-field" for="yawControl">
-              <span>yaw <strong id="yawValue">0°</strong></span>
-              <input id="yawControl" type="range" min="0" max="360" step="1" value="0" />
-            </label>
-
-            <label class="control-field" for="pitchControl">
-              <span>pitch <strong id="pitchValue">12°</strong></span>
-              <input id="pitchControl" type="range" min="-35" max="45" step="1" value="12" />
-            </label>
-
-            <label class="control-field" for="zoomControl">
-              <span>zoom <strong id="zoomValue">1.00x</strong></span>
-              <input id="zoomControl" type="range" min="0.7" max="1.8" step="0.05" value="1" />
-            </label>
-
-            <div class="render-actions">
-              <button id="autoOrbitButton" class="mini-button is-active" type="button">Auto Orbit</button>
-              <button id="resetViewButton" class="mini-button" type="button">Reset</button>
-              <button id="remoteModeButton" class="mini-button" type="button">Remote GPU</button>
-            </div>
-
-            <p id="renderStatusLine" class="render-status-line">
-              Remote endpoint not connected. Using pre-rendered 360 media fallback.
-            </p>
-          </section>
-
-          <section class="core-status glass-panel" aria-label="Current observatory focus">
+          <section class="core-status glass-panel" aria-label="当前观察焦点">
             <article>
-              <span>selected agent</span>
-              <strong id="coreAgentName">Mara Vale</strong>
-              <small id="coreAgentRole">night-shift operator</small>
+              <span>当前个体</span>
+              <strong id="coreAgentName">玛拉</strong>
+              <small id="coreAgentRole">夜班操作员</small>
             </article>
             <article>
-              <span>current time</span>
+              <span>当前时间</span>
               <strong id="coreTime">19:40</strong>
-              <small id="corePhase">night / neon city</small>
+              <small id="corePhase">夜晚 / 霓虹街区</small>
             </article>
             <article>
-              <span>current view</span>
-              <strong id="coreView">overview</strong>
-              <small id="coreRenderMode">pre-rendered video / no WebGL</small>
+              <span>当前视角</span>
+              <strong id="coreView">总览</strong>
+              <small id="coreRenderMode">预渲染视频 / 不启用本地三维渲染</small>
             </article>
             <article class="core-wide">
-              <span>thinking / event</span>
-              <strong id="coreThought">Will it save time tonight?</strong>
-              <small id="coreEvent">Night diffusion check</small>
+              <span>正在想什么 / 正在发生什么</span>
+              <strong id="coreThought">今晚能不能省时间？</strong>
+              <small id="coreEvent">夜间扩散检查</small>
             </article>
           </section>
 
-          <aside class="module-dock glass-panel" aria-label="Event injector">
-            <div class="panel-title">
-              <p class="kicker">event injector</p>
-              <h2>Module Rack</h2>
-            </div>
-            <div id="moduleRack" class="module-rack"></div>
-          </aside>
-
-          <aside class="lens-dock glass-panel" aria-label="Agent impact panel">
-            <div class="panel-title">
-              <p class="kicker">population lens</p>
-              <h2 id="selectedAgentName">Mara Vale</h2>
-            </div>
-            <div class="agent-meta">
-              <span id="selectedAgentRole">night-shift operator</span>
-              <span id="selectedAgentNeed">needs reliable time savings</span>
-            </div>
-            <p id="selectedAgentRead" class="agent-read">
-              Classifies the event as useful only if it lowers repeated paperwork without extra setup.
-            </p>
-            <dl class="signal-list">
-              <div>
-                <dt>Primary question</dt>
-                <dd id="agentQuestion">Will it save time tonight?</dd>
+          <section class="foldout-dock" aria-label="折叠信息舱">
+            <details class="foldout-card glass-panel" open>
+              <summary>
+                <span>事件模块</span>
+                <strong id="activeModuleName">流程助手</strong>
+              </summary>
+              <div class="foldout-body">
+                <p class="module-summary">
+                  <span id="activeModuleType">软件模块</span>
+                  <small id="activeModulePayload">用途：降低重复文书摩擦</small>
+                </p>
+                <div id="moduleRack" class="module-rack"></div>
               </div>
-              <div>
-                <dt>Likely action</dt>
-                <dd id="agentAction">tries with a fallback ready</dd>
-              </div>
-            </dl>
-          </aside>
+            </details>
 
-          <section class="module-beacon glass-panel" aria-label="Active module">
-            <span id="activeModuleType">software module</span>
-            <strong id="activeModuleName">Workflow Helper</strong>
-            <small id="activeModulePayload">purpose: reduce paperwork friction</small>
+            <details class="foldout-card glass-panel">
+              <summary>
+                <span>人物状态</span>
+                <strong id="selectedAgentName">玛拉</strong>
+              </summary>
+              <div class="foldout-body">
+                <div class="agent-meta">
+                  <span id="selectedAgentRole">夜班操作员</span>
+                  <span id="selectedAgentNeed">需要可靠地省时间</span>
+                </div>
+                <p id="selectedAgentRead" class="agent-read">
+                  只有在确实减少重复工作、且不增加设置负担时，才会把事件判断为有用。
+                </p>
+                <dl class="signal-list">
+                  <div>
+                    <dt>核心问题</dt>
+                    <dd id="agentQuestion">今晚能不能省时间？</dd>
+                  </div>
+                  <div>
+                    <dt>可能行动</dt>
+                    <dd id="agentAction">先试用，同时保留退路</dd>
+                  </div>
+                </dl>
+              </div>
+            </details>
+
+            <details class="foldout-card glass-panel">
+              <summary>
+                <span>语义路径</span>
+                <strong>事件重分类</strong>
+              </summary>
+              <div class="foldout-body semantic-ribbon" aria-label="语义重分类路径">
+                <article>
+                  <span>1 / 注入事件</span>
+                  <strong id="eventSummary">一个工具承诺进入街区</strong>
+                </article>
+                <article>
+                  <span>2 / 本体分裂</span>
+                  <strong id="ontologySummary">个体会通过自己的需要重新分类它</strong>
+                </article>
+                <article>
+                  <span>3 / 社会反应</span>
+                  <strong id="responseSummary">采纳、延迟、绕行和拒绝开始分化</strong>
+                </article>
+              </div>
+            </details>
+
+            <details class="foldout-card glass-panel">
+              <summary>
+                <span>扩散与人群</span>
+                <strong>8 个可见个体</strong>
+              </summary>
+              <div class="foldout-body population-foldout">
+                <div id="impactRows" class="impact-rows" aria-label="事件扩散指标"></div>
+                <div id="agentRail" class="agent-grid" aria-label="局部人群切片"></div>
+              </div>
+            </details>
           </section>
         </section>
 
-        <section class="semantic-ribbon glass-panel" aria-label="Semantic retyping path">
-          <article>
-            <span>1 / injected event</span>
-            <strong id="eventSummary">A tool promise enters the district</strong>
-          </article>
-          <article>
-            <span>2 / ontology split</span>
-            <strong id="ontologySummary">Agents classify it through local needs</strong>
-          </article>
-          <article>
-            <span>3 / social response</span>
-            <strong id="responseSummary">Adoption, delay, workaround, and rejection diverge</strong>
-          </article>
-        </section>
-
-        <section class="timeline-console glass-panel" aria-label="Timeline event controls">
+        <section class="timeline-console glass-panel" aria-label="时间线事件控制">
           <div class="panel-title inline">
             <div>
-              <p class="kicker">timeline</p>
-              <h2>Event Playback</h2>
+              <p class="kicker">时间线</p>
+              <h2>事件回放</h2>
             </div>
-            <span id="currentEventLabel">Current event: initial module exposure</span>
+            <span id="currentEventLabel">当前事件：初始模块暴露</span>
           </div>
 
-          <div id="timelineTrack" class="timeline-track" aria-label="Event nodes"></div>
+          <div id="timelineTrack" class="timeline-track" aria-label="事件节点"></div>
 
           <div class="timeline-detail">
             <article>
               <span id="activeEventTime">19:40</span>
-              <strong id="activeEventTitle">Initial module exposure</strong>
-              <p id="activeEventSummary">The module becomes visible to the local population slice.</p>
+              <strong id="activeEventTitle">初始模块暴露</strong>
+              <p id="activeEventSummary">模块开始被局部人群看见。</p>
             </article>
-            <div id="timePresets" class="time-presets" aria-label="Time presets"></div>
+            <div id="timePresets" class="time-presets" aria-label="时间预设"></div>
           </div>
         </section>
       </section>
-
-      <section class="lower-orbit" aria-label="Impact and local population">
-        <section class="impact-map glass-panel" aria-label="Impact map">
-          <div class="panel-title inline">
-            <div>
-              <p class="kicker">system impact</p>
-              <h2>Event Diffusion Map</h2>
-            </div>
-            <span id="runBoundaryLabel">module can be injected or removed at any time</span>
-          </div>
-          <div id="impactRows" class="impact-rows"></div>
-        </section>
-
-        <section class="agent-rail glass-panel" aria-label="Agent rail">
-          <div class="panel-title inline">
-            <div>
-              <p class="kicker">visible agents</p>
-              <h2>Local Population Slice</h2>
-            </div>
-            <span>8 staged agents / neutral public seed</span>
-          </div>
-          <div id="agentRail" class="agent-grid"></div>
-        </section>
-      </section>
-
-      <footer class="platform-footer">
-        <span>Platform first, modules second.</span>
-        <span>No branded private module is bundled by default.</span>
-        <span>Software and hardware both enter as structured events.</span>
-      </footer>
     </main>
 
     <script src="app.js"></script>

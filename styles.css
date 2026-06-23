@@ -341,10 +341,8 @@ h2 {
 }
 
 .stage-chip,
-.module-dock,
-.lens-dock,
-.module-beacon,
 .render-control-panel,
+.foldout-dock,
 .core-status {
   position: absolute;
   z-index: 2;
@@ -447,7 +445,6 @@ h2 {
 .module-dock,
 .lens-dock,
 .module-beacon,
-.semantic-ribbon,
 .lower-orbit,
 .platform-footer {
   display: none;
@@ -464,8 +461,43 @@ h2 {
   border-radius: 20px;
 }
 
-.render-control-panel .panel-title {
-  margin-bottom: 0;
+.panel-summary {
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.panel-summary::-webkit-details-marker,
+.foldout-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.panel-summary::after,
+.foldout-card summary::after {
+  content: "展开";
+  flex: 0 0 auto;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.render-control-panel[open] .panel-summary::after,
+.foldout-card[open] summary::after {
+  content: "收起";
+}
+
+.render-control-body {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 8px;
 }
 
 #renderModeBadge {
@@ -548,6 +580,75 @@ h2 {
   margin: 0;
   color: var(--muted);
   font-size: 11px;
+  line-height: 1.35;
+}
+
+.foldout-dock {
+  top: 128px;
+  left: 14px;
+  width: min(328px, calc(100% - 28px));
+  max-height: min(34vh, 320px);
+  z-index: 4;
+  display: grid;
+  gap: 8px;
+  overflow-y: auto;
+  padding-right: 2px;
+  scrollbar-width: thin;
+}
+
+.foldout-card {
+  border-radius: 18px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.foldout-card summary {
+  list-style: none;
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.foldout-card summary span,
+.module-summary span {
+  color: var(--amber);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.foldout-card summary strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.18;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.foldout-body {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--hairline);
+  padding: 10px;
+  background: rgba(5, 7, 10, 0.18);
+}
+
+.module-summary {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.module-summary small {
+  color: var(--muted);
+  font-size: 12px;
   line-height: 1.35;
 }
 
@@ -713,11 +814,11 @@ h2 {
 }
 
 .agent-read {
-  min-height: 62px;
-  margin: 13px 0;
+  min-height: 0;
+  margin: 6px 0 2px;
   color: #e3dfd0;
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .signal-list {
@@ -728,7 +829,7 @@ h2 {
 
 .signal-list div {
   border-top: 1px solid var(--hairline);
-  padding-top: 9px;
+  padding-top: 8px;
 }
 
 .signal-list dt {
@@ -755,6 +856,17 @@ h2 {
   padding: 12px;
 }
 
+.foldout-card .semantic-ribbon {
+  width: 100%;
+  margin: 0;
+  position: static;
+  z-index: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 0;
+}
+
 .semantic-ribbon article {
   min-height: 96px;
   border-radius: 16px;
@@ -762,9 +874,14 @@ h2 {
   background: rgba(255, 255, 255, 0.045);
 }
 
+.foldout-card .semantic-ribbon article {
+  min-height: 0;
+  padding: 10px;
+}
+
 .semantic-ribbon span {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: var(--dim);
   font-size: 11px;
   letter-spacing: 0.04em;
@@ -773,7 +890,7 @@ h2 {
 
 .semantic-ribbon strong {
   display: block;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.25;
 }
 
@@ -950,11 +1067,11 @@ h2 {
 
 .impact-row {
   display: grid;
-  grid-template-columns: 126px minmax(0, 1fr) 54px;
+  grid-template-columns: 96px minmax(0, 1fr) 42px;
   gap: 10px;
   align-items: center;
   border-radius: 14px;
-  padding: 10px;
+  padding: 8px;
   background: rgba(255, 255, 255, 0.045);
 }
 
@@ -985,22 +1102,31 @@ h2 {
 .agent-grid {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(184px, 1fr);
+  grid-auto-columns: minmax(170px, 1fr);
   gap: 10px;
   overflow-x: auto;
   padding-bottom: 2px;
   scrollbar-width: thin;
 }
 
+.population-foldout {
+  max-height: min(44vh, 360px);
+  overflow: auto;
+}
+
+.population-foldout .agent-grid {
+  grid-auto-columns: minmax(158px, 1fr);
+}
+
 .agent-button {
-  min-height: 86px;
+  min-height: 74px;
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  gap: 11px;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 9px;
   align-items: center;
   border: 1px solid var(--hairline);
   border-radius: 18px;
-  padding: 10px;
+  padding: 9px;
   background: rgba(255, 255, 255, 0.045);
   cursor: pointer;
   text-align: left;
@@ -1012,8 +1138,8 @@ h2 {
 }
 
 .agent-dot {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -1042,7 +1168,7 @@ h2 {
 }
 
 .agent-button span {
-  margin-top: 6px;
+  margin-top: 5px;
   color: var(--muted);
   font-size: 11px;
 }
@@ -1060,7 +1186,6 @@ h2 {
 .module-dock,
 .lens-dock,
 .module-beacon,
-.semantic-ribbon,
 .lower-orbit,
 .platform-footer {
   display: none;
@@ -1120,6 +1245,16 @@ h2 {
 
   .core-status {
     bottom: 10px;
+  }
+
+  .foldout-dock {
+    top: 96px;
+    max-height: min(32vh, 250px);
+  }
+
+  .foldout-card summary {
+    min-height: 36px;
+    padding: 8px;
   }
 }
 
@@ -1239,6 +1374,24 @@ h2 {
 
   .render-control-panel {
     display: none;
+  }
+
+  .foldout-dock {
+    top: 72px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-height: min(34vh, 250px);
+  }
+
+  .foldout-card summary {
+    min-height: 36px;
+    padding: 8px;
+  }
+
+  .foldout-card summary strong,
+  .foldout-card summary span {
+    font-size: 11px;
   }
 
   .core-status {

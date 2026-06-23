@@ -10,65 +10,65 @@ function vector3(x = 0, y = 0, z = 0) {
 const modules = [
   {
     id: "software-helper",
-    type: "software module",
-    name: "Workflow Helper",
-    title: "Neutral software assistant trial",
-    summary: "A tool promise enters the district through a public service desk.",
-    payload: "purpose: reduce paperwork friction",
-    location: "mixed-use district / public service desk",
-    ontology: "Agents classify it through time pressure, setup cost, trust, and fallback options.",
-    response: "Early try, cautious delay, peer explanation, and offline workaround appear in parallel.",
+    type: "软件模块",
+    name: "流程助手",
+    title: "中性软件助手试验",
+    summary: "一个工具承诺通过公共服务台进入街区。",
+    payload: "用途：降低重复文书摩擦",
+    location: "混合街区 / 公共服务台",
+    ontology: "个体会通过时间压力、设置成本、信任和退路来分类它。",
+    response: "先试用、谨慎延迟、同伴解释和离线绕行会并行出现。",
     visual: {
       color: "#f0b860",
       accent: "#b49bff"
     },
     metrics: [
-      ["Curiosity", 72],
-      ["Setup concern", 48],
-      ["Peer verification", 64],
-      ["Offline fallback", 38]
+      ["好奇度", 72],
+      ["设置顾虑", 48],
+      ["同伴验证", 64],
+      ["离线退路", 38]
     ]
   },
   {
     id: "hardware-sensor",
-    type: "hardware module",
-    name: "Wearable Signal Tag",
-    title: "Lightweight device field trial",
-    summary: "A small physical device is introduced as a safety and coordination aid.",
-    payload: "weight: 42g / dimensions: 58x34x12mm / purpose: signal status",
-    location: "transit edge / repair counter",
-    ontology: "Agents classify it through comfort, battery, privacy, durability, and visible usefulness.",
-    response: "Hands-on testers move first; privacy-sensitive agents ask who can see the signal.",
+    type: "硬件模块",
+    name: "随身信号牌",
+    title: "轻量设备场景试验",
+    summary: "一个小型实体设备作为安全与协同辅助被引入。",
+    payload: "重量：42 克 / 尺寸：58x34x12 毫米 / 用途：状态信号",
+    location: "交通边缘 / 维修柜台",
+    ontology: "个体会通过舒适度、电量、隐私、耐用性和可见用途来分类它。",
+    response: "愿意上手的人先行动；隐私敏感的人会追问谁能看到信号。",
     visual: {
       color: "#4cc8a6",
       accent: "#6fb7e8"
     },
     metrics: [
-      ["Hands-on trial", 68],
-      ["Privacy concern", 61],
-      ["Device friction", 44],
-      ["Practical utility", 76]
+      ["上手试用", 68],
+      ["隐私顾虑", 61],
+      ["设备摩擦", 44],
+      ["实际用途", 76]
     ]
   },
   {
     id: "public-policy",
-    type: "institution event",
-    name: "Access Rule Change",
-    title: "Public rule update",
-    summary: "A local rule changes how people access a shared resource.",
-    payload: "scope: shared facility / effect: queue and permission change",
-    location: "community hub / notice board",
-    ontology: "Agents classify it through fairness, inconvenience, authority trust, and workaround paths.",
-    response: "Some comply, some seek clarification, some route around the new rule.",
+    type: "机构事件",
+    name: "准入规则变化",
+    title: "公共规则更新",
+    summary: "一条本地规则改变了人们使用共享资源的方式。",
+    payload: "范围：共享设施 / 影响：排队与权限变化",
+    location: "社区中心 / 公告栏",
+    ontology: "个体会通过公平性、不便程度、权威信任和绕行路径来分类它。",
+    response: "有人遵守，有人要求解释，也有人绕开新规则。",
     visual: {
       color: "#b49bff",
       accent: "#f07a63"
     },
     metrics: [
-      ["Compliance", 58],
-      ["Clarification need", 73],
-      ["Authority trust", 42],
-      ["Workaround search", 55]
+      ["遵守倾向", 58],
+      ["解释需求", 73],
+      ["权威信任", 42],
+      ["绕行搜索", 55]
     ]
   }
 ];
@@ -76,97 +76,97 @@ const modules = [
 const agents = [
   {
     id: "agent-001",
-    initials: "MV",
-    name: "Mara Vale",
-    role: "night-shift operator",
-    need: "needs reliable time savings",
-    read: "Classifies the event as useful only if it lowers repeated work without adding setup overhead.",
-    question: "Will it save time tonight?",
-    action: "tries with a fallback ready",
+    initials: "玛",
+    name: "玛拉",
+    role: "夜班操作员",
+    need: "需要可靠地省时间",
+    read: "只有在确实减少重复工作、且不增加设置负担时，才会把事件判断为有用。",
+    question: "今晚能不能省时间？",
+    action: "先试用，同时保留退路",
     color: "#f2c15f",
     position: [-3.6, -2.9]
   },
   {
     id: "agent-002",
-    initials: "IK",
-    name: "Iko Ren",
-    role: "repair hobbyist",
-    need: "needs hands-on proof",
-    read: "Treats any module as a thing to inspect, test, and compare against lived device failures.",
-    question: "Can I see how it fails?",
-    action: "tests the edge case first",
+    initials: "可",
+    name: "一可",
+    role: "维修爱好者",
+    need: "需要亲手验证",
+    read: "会把任何模块都当成可以拆看、测试、对照真实故障经验的对象。",
+    question: "它会怎么出错？",
+    action: "先测试边缘情况",
     color: "#77bfea",
     position: [2.9, -3.4]
   },
   {
     id: "agent-003",
-    initials: "SN",
-    name: "Sana North",
-    role: "caregiver",
-    need: "needs predictable routines",
-    read: "Reads novelty through disruption risk and whether the module makes coordination gentler.",
-    question: "Will this interrupt the routine?",
-    action: "asks for a low-risk trial",
+    initials: "萨",
+    name: "萨娜",
+    role: "照护者",
+    need: "需要可预期的日常节奏",
+    read: "会从打断风险和协同是否更温和两个角度理解新事物。",
+    question: "它会不会打乱日常？",
+    action: "要求低风险试用",
     color: "#f17662",
     position: [-4.7, 1.3]
   },
   {
     id: "agent-004",
-    initials: "DR",
-    name: "Daren Li",
-    role: "delivery rider",
-    need: "needs fast visible utility",
-    read: "Ranks the event by immediate route value, battery cost, and whether others already trust it.",
-    question: "Does this help before the next stop?",
-    action: "adopts only if friction is tiny",
+    initials: "达",
+    name: "达仁",
+    role: "配送骑手",
+    need: "需要快速可见的用途",
+    read: "会按即时路线价值、电量成本、以及别人是否已经信任来排序事件。",
+    question: "下一站前它能帮上忙吗？",
+    action: "只有摩擦很小时才采纳",
     color: "#4cd5ae",
     position: [4.2, 1.8]
   },
   {
     id: "agent-005",
-    initials: "MO",
-    name: "Mio Park",
-    role: "small shop owner",
-    need: "needs customer calm",
-    read: "Watches how the event changes questions, queues, and confidence inside a public space.",
-    question: "Will customers argue about it?",
-    action: "becomes a cautious explainer",
+    initials: "米",
+    name: "米欧",
+    role: "小店店主",
+    need: "需要顾客保持平静",
+    read: "会观察事件如何改变公共空间里的提问、排队和信心。",
+    question: "顾客会不会因此争论？",
+    action: "谨慎地向别人解释",
     color: "#eadc72",
     position: [0.6, 3.5]
   },
   {
     id: "agent-006",
-    initials: "TA",
-    name: "Tala Gray",
-    role: "campus maker",
-    need: "needs remixable tools",
-    read: "Looks for whether the module can be understood, modified, and used in a small project.",
-    question: "Can I adapt it?",
-    action: "experiments then shares notes",
+    initials: "塔",
+    name: "塔拉",
+    role: "校园创客",
+    need: "需要可改造的工具",
+    read: "会寻找这个模块是否能被理解、修改，并用于小项目。",
+    question: "我能改造它吗？",
+    action: "先实验，再分享笔记",
     color: "#b6a2ff",
     position: [-1.2, 4.7]
   },
   {
     id: "agent-007",
-    initials: "OR",
-    name: "Oren Kai",
-    role: "skeptical admin",
-    need: "needs auditability",
-    read: "Converts platform claims into policy, logging, accountability, and support burden questions.",
-    question: "Who is responsible if it breaks?",
-    action: "requires documentation first",
+    initials: "欧",
+    name: "欧仁",
+    role: "谨慎管理员",
+    need: "需要可审计性",
+    read: "会把平台承诺转化成政策、日志、责任归属和支持负担问题。",
+    question: "如果坏了谁负责？",
+    action: "先要求文档",
     color: "#9bb592",
     position: [4.8, -0.9]
   },
   {
     id: "agent-008",
-    initials: "JE",
-    name: "Jessa Moon",
-    role: "event organizer",
-    need: "needs crowd coordination",
-    read: "Reads the event through group flow, social proof, and whether it reduces confusion at scale.",
-    question: "Will the group understand it together?",
-    action: "pilots it with a small group",
+    initials: "洁",
+    name: "洁莎",
+    role: "活动组织者",
+    need: "需要人群协同",
+    read: "会通过群体流动、社会证明、以及是否能减少大规模困惑来理解事件。",
+    question: "大家能一起理解它吗？",
+    action: "先用小群体试点",
     color: "#f29bb6",
     position: [-5.2, -0.8]
   }
@@ -175,33 +175,33 @@ const agents = [
 const perspectives = {
   overview: {
     image: "assets/cyberpunk-observatory-viewport.png",
-    alt: "Neutral miniature cyberpunk synthetic society overview",
-    label: "god-view slice",
-    location: "mixed-use district / full population map",
-    summary: "high-dimensional 3D overview",
-    eventPrefix: "A module enters the full 3D population map",
-    ontologyPrefix: "Overview shows which agent clusters reinterpret it first",
-    responsePrefix: "Diffusion, delay, workaround, and rejection can be compared at once"
+    alt: "中性的赛博微缩合成社会总览",
+    label: "上帝视角切片",
+    location: "混合街区 / 全体人群地图",
+    summary: "高维三维总览",
+    eventPrefix: "一个模块进入完整的三维人群地图",
+    ontologyPrefix: "总览显示哪些个体群先重新理解它",
+    responsePrefix: "扩散、延迟、绕行和拒绝可以同时比较"
   },
   observer: {
     image: "assets/observer-deck-view.png",
-    alt: "Neutral observer deck cinematic interface view",
-    label: "observer slice",
-    location: "observer deck / causal replay",
-    summary: "third-person causal camera",
-    eventPrefix: "The observer camera frames the event as a replayable slice",
-    ontologyPrefix: "Observer view emphasizes lenses, cause links, and selected agents",
-    responsePrefix: "This mode is for public video framing, not live-runtime proof"
+    alt: "中性的旁观甲板电影化界面视角",
+    label: "旁观者切片",
+    location: "旁观甲板 / 因果回放",
+    summary: "第三人称因果镜头",
+    eventPrefix: "旁观镜头把事件框定成可回放切片",
+    ontologyPrefix: "旁观视角强调镜头、因果链接和被选中的个体",
+    responsePrefix: "此模式用于公开视频表达，不等同于实时运行证明"
   },
   first: {
     image: "assets/street-event-wide.png",
-    alt: "Neutral cinematic street-level public notice event",
-    label: "first-person slice",
-    location: "street level / selected agent viewpoint",
-    summary: "embodied street-level view",
-    eventPrefix: "The same module appears from inside the street encounter",
-    ontologyPrefix: "The selected agent sees it through urgency, trust, and local context",
-    responsePrefix: "First-person view reveals hesitation, attention, and social proof"
+    alt: "中性的街面公共通知电影化事件",
+    label: "第一人称切片",
+    location: "街面 / 被选中个体的视角",
+    summary: "具身街面视角",
+    eventPrefix: "同一个模块从街面遭遇内部出现",
+    ontologyPrefix: "被选中个体会通过紧迫感、信任和本地处境看见它",
+    responsePrefix: "第一人称视角揭示迟疑、注意力和社会证明"
   }
 };
 
@@ -215,15 +215,15 @@ const spatialVideoManifest = {
   views: {
     overview: {
       anchorSeconds: 0.5,
-      label: "overview orbit anchor"
+      label: "总览环绕锚点"
     },
     observer: {
       anchorSeconds: 3.0,
-      label: "observer deck anchor"
+      label: "旁观甲板锚点"
     },
     first: {
       anchorSeconds: 6.0,
-      label: "street-level anchor"
+      label: "街面锚点"
     }
   }
 };
@@ -240,25 +240,25 @@ const viewTargets = [
   {
     id: "view-overview",
     type: "viewpoint",
-    label: "Overview / world orbit",
+    label: "总览 / 世界环绕",
     perspective: "overview"
   },
   {
     id: "view-observer",
     type: "viewpoint",
-    label: "Observer deck / causal orbit",
+    label: "旁观甲板 / 因果环绕",
     perspective: "observer"
   },
   {
     id: "view-first",
     type: "viewpoint",
-    label: "First person / street orbit",
+    label: "第一人称 / 街面环绕",
     perspective: "first"
   },
   ...agents.map((agent) => ({
     id: agent.id,
     type: "agent",
-    label: `${agent.name} / 360 focus`,
+    label: `${agent.name} / 360 度聚焦`,
     agentId: agent.id
   }))
 ];
@@ -266,7 +266,7 @@ const viewTargets = [
 const dayPhases = [
   {
     id: "night",
-    label: "night / neon city",
+    label: "夜晚 / 霓虹街区",
     start: 0,
     end: 300,
     sky: "#060914",
@@ -280,7 +280,7 @@ const dayPhases = [
   },
   {
     id: "dawn",
-    label: "dawn / low haze",
+    label: "黎明 / 低雾",
     start: 300,
     end: 420,
     sky: "#1a2230",
@@ -294,7 +294,7 @@ const dayPhases = [
   },
   {
     id: "day",
-    label: "day / readable city",
+    label: "白天 / 可读城市",
     start: 420,
     end: 1020,
     sky: "#607284",
@@ -308,7 +308,7 @@ const dayPhases = [
   },
   {
     id: "dusk",
-    label: "dusk / semantic glow",
+    label: "黄昏 / 语义辉光",
     start: 1020,
     end: 1140,
     sky: "#15172c",
@@ -322,7 +322,7 @@ const dayPhases = [
   },
   {
     id: "night",
-    label: "night / neon city",
+    label: "夜晚 / 霓虹街区",
     start: 1140,
     end: 1440,
     sky: "#060914",
@@ -342,8 +342,8 @@ const timelineEvents = [
     time: 390,
     moduleId: "software-helper",
     agentId: "agent-005",
-    title: "Quiet morning exposure",
-    summary: "A small service-desk note becomes visible before the district reaches full activity.",
+    title: "清晨安静暴露",
+    summary: "街区进入高活动前，一条服务台提示先被少数人看见。",
     color: "#6fb7e8",
     intensity: 0.56,
     duration: 210,
@@ -354,8 +354,8 @@ const timelineEvents = [
     time: 720,
     moduleId: "hardware-sensor",
     agentId: "agent-002",
-    title: "Hands-on trial window",
-    summary: "A tangible module is inspected during the day, making comfort, privacy, and utility visible.",
+    title: "白天上手试用",
+    summary: "一个实体模块在白天被查看，舒适度、隐私和用途变得可见。",
     color: "#4cc8a6",
     intensity: 0.68,
     duration: 260,
@@ -366,8 +366,8 @@ const timelineEvents = [
     time: 1080,
     moduleId: "public-policy",
     agentId: "agent-007",
-    title: "Semantic retyping spike",
-    summary: "A neutral rule update is reclassified by different agents as fairness, burden, or workaround risk.",
+    title: "语义重分类峰值",
+    summary: "一条中性规则更新被不同个体重新分类为公平、负担或绕行风险。",
     color: "#b49bff",
     intensity: 0.88,
     duration: 170,
@@ -378,8 +378,8 @@ const timelineEvents = [
     time: 1180,
     moduleId: "software-helper",
     agentId: "agent-001",
-    title: "Night diffusion check",
-    summary: "The same event is tested under time pressure, where fallback paths and peer trust matter more.",
+    title: "夜间扩散检查",
+    summary: "同一事件在时间压力下被测试，退路和同伴信任变得更重要。",
     color: "#f0b860",
     intensity: 1,
     duration: 190,
@@ -390,8 +390,8 @@ const timelineEvents = [
     time: 1320,
     moduleId: "hardware-sensor",
     agentId: "agent-004",
-    title: "Late workaround path",
-    summary: "Some agents accept the module as useful, while others route around it or wait for clearer proof.",
+    title: "深夜绕行路径",
+    summary: "有些个体接受模块为有用工具，另一些则绕行或等待更清楚的证明。",
     color: "#f07a63",
     intensity: 0.74,
     duration: 160,
@@ -400,10 +400,10 @@ const timelineEvents = [
 ];
 
 const timePresets = [
-  { id: "preset-dawn", label: "Dawn", time: 390, detail: "low haze" },
-  { id: "preset-day", label: "Day", time: 720, detail: "readable city" },
-  { id: "preset-dusk", label: "Dusk", time: 1080, detail: "semantic glow" },
-  { id: "preset-night", label: "Night", time: 1180, detail: "neon city" }
+  { id: "preset-dawn", label: "黎明", time: 390, detail: "低雾" },
+  { id: "preset-day", label: "白天", time: 720, detail: "可读城市" },
+  { id: "preset-dusk", label: "黄昏", time: 1080, detail: "语义辉光" },
+  { id: "preset-night", label: "夜晚", time: 1180, detail: "霓虹街区" }
 ];
 
 let activeModule = modules[0];
@@ -626,7 +626,7 @@ function setRenderTransportMode(mode) {
   renderTransportMode = mode === "remote" ? "remote" : "fallback";
   remoteModeButton?.classList.toggle("is-active", renderTransportMode === "remote");
   if (remoteModeButton) {
-    remoteModeButton.textContent = renderTransportMode === "remote" ? "Remote staged" : "Remote GPU";
+    remoteModeButton.textContent = renderTransportMode === "remote" ? "远端已准备" : "远端渲染";
   }
   syncViewControls({ seekVideo: renderTransportMode !== "remote" });
 }
@@ -634,7 +634,7 @@ function setRenderTransportMode(mode) {
 function updateControlLabels(state = getViewState()) {
   if (yawValue) yawValue.textContent = `${Math.round(state.yaw)}°`;
   if (pitchValue) pitchValue.textContent = `${Math.round(state.pitch)}°`;
-  if (zoomValue) zoomValue.textContent = `${Number(state.zoom).toFixed(2)}x`;
+  if (zoomValue) zoomValue.textContent = `${Number(state.zoom).toFixed(2)} 倍`;
   if (yawControl) yawControl.value = String(Math.round(state.yaw));
   if (pitchControl) pitchControl.value = String(Math.round(state.pitch));
   if (zoomControl) zoomControl.value = String(Number(state.zoom).toFixed(2));
@@ -700,21 +700,21 @@ function syncViewControls(options = {}) {
   window.__SSO_REMOTE_RENDER_STATE__ = payload;
   window.dispatchEvent(new CustomEvent("sso:remote-render-control", { detail: payload }));
   if (renderModeBadge) {
-    renderModeBadge.textContent = renderTransportMode === "remote" ? "remote GPU staged" : "media fallback";
+    renderModeBadge.textContent = renderTransportMode === "remote" ? "远端已准备" : "媒体回退";
   }
   if (renderStatusLine) {
     if (renderTransportMode === "remote" && remoteRenderConfig.endpointConfigured) {
-      renderStatusLine.textContent = "Remote GPU control packet staged for the configured WebRTC endpoint.";
+      renderStatusLine.textContent = "远端渲染控制包已准备，将发送到配置好的视频流端点。";
     } else if (renderTransportMode === "remote") {
-      renderStatusLine.textContent = "Remote GPU control packet staged. Add ?renderEndpoint=... to connect a stream service.";
+      renderStatusLine.textContent = "远端渲染控制包已准备；配置渲染端点后即可连接视频流服务。";
     } else {
-      renderStatusLine.textContent = "Using pre-rendered 360 orbit media. Browser decodes video and sends no local WebGL work.";
+      renderStatusLine.textContent = "当前使用预渲染 360 度环绕媒体，浏览器只解码视频，不执行本地三维渲染。";
     }
   }
   if (coreRenderMode) {
     coreRenderMode.textContent = renderTransportMode === "remote"
-      ? "remote GPU staged / no local WebGL"
-      : "360 media fallback / no WebGL";
+      ? "远端渲染已准备 / 不启用本地三维渲染"
+      : "360 度媒体回退 / 不启用本地三维渲染";
   }
 }
 
@@ -768,7 +768,7 @@ function jumpToTime(minutes) {
 
 function syncTimeline() {
   if (!activeTimelineEvent) return;
-  currentEventLabel.textContent = `Current event: ${activeTimelineEvent.title}`;
+  currentEventLabel.textContent = `当前事件：${activeTimelineEvent.title}`;
   activeEventTime.textContent = formatClock(activeTimelineEvent.time);
   activeEventTitle.textContent = activeTimelineEvent.title;
   activeEventSummary.textContent = activeTimelineEvent.summary;
@@ -888,7 +888,7 @@ function updateClock() {
 
 function togglePlay() {
   isPlaying = !isPlaying;
-  playButton.textContent = isPlaying ? "Pause Timeline" : "Play Timeline";
+  playButton.textContent = isPlaying ? "暂停时间线" : "播放时间线";
 
   if (isPlaying) {
     timer = window.setInterval(() => {
@@ -911,8 +911,8 @@ function updateCoreStatus() {
   if (coreView) coreView.textContent = perspective?.label || activePerspective;
   if (coreRenderMode) {
     coreRenderMode.textContent = renderTransportMode === "remote"
-      ? "remote GPU staged / no local WebGL"
-      : "360 media fallback / no WebGL";
+      ? "远端渲染已准备 / 不启用本地三维渲染"
+      : "360 度媒体回退 / 不启用本地三维渲染";
   }
   if (coreThought) coreThought.textContent = activeAgent.question;
   if (coreEvent) {
