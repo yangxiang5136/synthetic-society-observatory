@@ -24,7 +24,7 @@
 /* Cockpit V1: dense observatory console matching the original dashboard direction. */
 .cockpit-shell {
   grid-template-columns: 260px minmax(0, 1fr) 320px;
-  grid-template-rows: minmax(0, 1fr) clamp(300px, 38vh, 360px);
+  grid-template-rows: minmax(0, 1fr) clamp(250px, 32vh, 290px);
   grid-template-areas:
     "left stage right"
     "bottom bottom bottom";
@@ -468,7 +468,7 @@
 /* Final cockpit overrides: keep this block last so older prototype rules cannot win. */
 .cockpit-shell {
   grid-template-columns: 260px minmax(0, 1fr) 320px;
-  grid-template-rows: minmax(0, 1fr) clamp(300px, 38vh, 360px);
+  grid-template-rows: minmax(0, 1fr) clamp(250px, 32vh, 290px);
   grid-template-areas:
     "left stage right"
     "bottom bottom bottom";
@@ -605,7 +605,7 @@
 @media (max-width: 940px) {
   .cockpit-shell {
     grid-template-columns: 188px minmax(0, 1fr) 214px;
-    grid-template-rows: minmax(0, 1fr) clamp(320px, 42vh, 360px);
+    grid-template-rows: minmax(0, 1fr) clamp(260px, 36vh, 300px);
     grid-template-areas:
       "left stage right"
       "bottom bottom bottom";
@@ -2169,7 +2169,7 @@ h2 {
 /* Final cockpit overrides: keep this block last so older prototype rules cannot win. */
 .cockpit-shell {
   grid-template-columns: 260px minmax(0, 1fr) 320px;
-  grid-template-rows: minmax(0, 1fr) clamp(300px, 38vh, 360px);
+  grid-template-rows: minmax(0, 1fr) clamp(250px, 32vh, 290px);
   grid-template-areas:
     "left stage right"
     "bottom bottom bottom";
@@ -2298,7 +2298,7 @@ h2 {
 @media (max-width: 1180px) {
   .cockpit-shell {
     grid-template-columns: 252px minmax(0, 1fr) 300px;
-    grid-template-rows: minmax(0, 1fr) clamp(320px, 40vh, 360px);
+    grid-template-rows: minmax(0, 1fr) clamp(260px, 34vh, 300px);
   }
 
   .cockpit-shell .bottom-console {
@@ -2309,7 +2309,7 @@ h2 {
 @media (min-width: 721px) and (max-width: 940px) {
   .cockpit-shell {
     grid-template-columns: clamp(206px, 26vw, 220px) minmax(0, 1fr) clamp(232px, 29vw, 250px);
-    grid-template-rows: minmax(0, 1fr) clamp(320px, 42vh, 360px);
+    grid-template-rows: minmax(0, 1fr) clamp(260px, 36vh, 300px);
     grid-template-areas:
       "left stage right"
       "bottom bottom bottom";
